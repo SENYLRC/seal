@@ -105,6 +105,25 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')   || (isset($_GET{'page'}))) {
       $loc = $row["loc"];
       $libsuspend = $row["suspend"];
       $system = $row["system"];
+      if ($system =="MH") {
+          $system ="Mid-Hudson Library System";
+      } elseif ($system=="RC") {
+          $system ="Ramapo Catskill Library System";
+      } elseif ($system=="SE") {
+          $system ="Southeastern";
+      } elseif ($system="OU") {
+          $system ="Orange Ulster BOCES";
+      } elseif ($system="SB") {
+          $system="Sullivan BOCES";
+      } elseif ($system=="UB") {
+          $system="Ulster BOCES";
+      } elseif ($system=="RB") {
+          $system="Rockland BOCES";
+      } elseif ($system=="DB") {
+          $system="Dutchess BOCES";
+      } else {
+          $system="Unknow";
+      }
       $book = $row["book"];
       $journal = $row["journal"];
       $av = $row["av"];
@@ -151,6 +170,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')   || (isset($_GET{'page'}))) {
       echo "Address: <strong> $libaddress2 </strong><br>";
       echo "&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong> $libaddress3 </strong><br>";
       echo "Phone: <strong> $libphone</strong><br>";
+      echo "Library System:<strong> $system</strong><br>";
       if ($user->uid) {
           echo "ILL Email(s): <a href='mailto:$illemail' target='_blank'>$illemail</a><br>";
       }

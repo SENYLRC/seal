@@ -25,6 +25,7 @@ $reqnumb=$_REQUEST["num"];
 $renewNote=$_REQUEST["renewNote"];
 $duedate=$_REQUEST["duedate"];
 $renewNoteLender=$_REQUEST["renewNoteLender"];
+
 if (isset($_REQUEST['a'])) {
     $renanswer = $_REQUEST['a'];
 } elseif (isset($_POST['a'])) {
@@ -61,13 +62,13 @@ if ($renanswer=='1') {
             echo "The renew request has been approved, <a href='/lender-history'>click here to go back to lender history</a>";
 
             ###Get the borrower email
-            $GETREQEMAIL="SELECT requesterEMAIL FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."'";
+            $GETREQEMAIL="SELECT title,requesterEMAIL FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."'";
             $result=mysqli_query($db, $GETREQEMAIL);
             $value = mysqli_fetch_object($result);
             $reqemail=$value->requesterEMAIL;
-
+            $title=$value->title;
             ######Message for the destination library
-            $messagedest = "Your renewal request for ILL# ".$reqnumb." has been approved with a due date of ".$duedate."  <br><br>";
+            $messagedest = "Your renewal request for ILL# ".$reqnumb." for ".$title." has been approved with a due date of ".$duedate."  <br><br>Title:".$title."<br>";
             if (strlen($renewNoteLender)>1) {
                 $messagedest .= "Lender Note:".$renewNoteLender."            <br>";
             }
@@ -101,13 +102,13 @@ if ($renanswer=='1') {
         if (mysqli_query($db, $sql)) {
             echo "The renew request has been rejected, <a href='/lender-history'>click here to go back to lender history</a>";
             ###Get the borrower email
-            $GETREQEMAIL="SELECT requesterEMAIL FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."'";
+            $GETREQEMAIL="SELECT title,requesterEMAIL FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."'";
             $result=mysqli_query($db, $GETREQEMAIL);
             $value = mysqli_fetch_object($result);
             $reqemail=$value->requesterEMAIL;
-
+            $title=$value->title;
             ######Message for the destination library
-            $messagedest = "Your renewal request for ILL# ".$reqnumb." has been denied, please return the book to the lender by the original due date. <br><br>";
+            $messagedest = "Your renewal request for ILL# ".$reqnumb." for ".$title." has been denied, please return the book to the lender by the original due date. <br><br>";
             if (strlen($renewNoteLender)>1) {
                 $messagedest .= "Lender Note:".$renewNoteLender."            <br>";
             }
@@ -141,13 +142,13 @@ if ($renanswer=='1') {
         if (mysqli_query($db, $sql)) {
             echo "The due date has been updated, <a href='/lender-history'>click here to go back to lender history</a>";
             ###Get the borrower email
-            $GETREQEMAIL="SELECT requesterEMAIL FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."'";
+            $GETREQEMAIL="SELECT Title,requesterEMAIL FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."'";
             $result=mysqli_query($db, $GETREQEMAIL);
             $value = mysqli_fetch_object($result);
             $reqemail=$value->requesterEMAIL;
-
+            $title=$value->Title;
             ######Message for the destination library
-            $messagedest = "The lender has changed the due date for ILL# ".$reqnumb." to ".$duedate.", please return the book to the lender by that date. <br><br>";
+            $messagedest = "The lender has changed the due date for ILL# ".$reqnumb."<br> Title: ".$title." <br>New Due Date: ".$duedate.", please return the book to the lender by that date. <br><br>";
             #######Set email subject for renewal
             $subject = "SEAL Due Date Modify: for ILL# $reqnumb";
             $subject = html_entity_decode($subject, ENT_QUOTES, 'UTF-8');
@@ -184,12 +185,13 @@ if ($renanswer=='1') {
             echo "Renew request for ILL ".$reqnumb." has been sent, <br><a href='/requesthistory'>click here to go back to request history</a>";
 
             #Get the Lending ID for the request
-            $sqlrenew= "SELECT Destination FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."' LIMIT 1 ";
+            $sqlrenew= "SELECT Title,Destination FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."' LIMIT 1 ";
             $result=mysqli_query($db, $sqlrenew);
             $value = mysqli_fetch_object($result);
             $lenderid=$value->Destination;
+            $title=$value->Title;
             ###Get the Destination Name
-            $GETLISTSQLDEST="SELECT`Name`, `ILL Email` FROM `SENYLRC-SEAL2-Library-Data` where loc = '$lenderid'  limit 1";
+            $GETLISTSQLDEST="SELECT `Name`, `ILL Email` FROM `SENYLRC-SEAL2-Library-Data` where loc = '$lenderid'  limit 1";
             $resultdest=mysqli_query($db, $GETLISTSQLDEST);
             while ($rowdest = mysqli_fetch_assoc($resultdest)) {
                 $destlib=$rowdest["Name"];
@@ -200,7 +202,7 @@ if ($renanswer=='1') {
             $destemail_to = implode(',', $destemailarray);
             ;
             ######Message for the destination library
-            $messagedest = $field_your_institution[0]['value']." has requested a renewal for ILL# ".$reqnumb."<br><br>
+            $messagedest = $field_your_institution[0]['value']." has requested a renewal for ILL# ".$reqnumb."<br>Title: ".$title."<br><br>
             <br>
             How do you wish to answer the renewal?  <a href='http://seal.senylrc.org/renew?num=$reqnumb&a=1' >Approved</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/renew?num=$reqnumb&a=2' >Deny</a>
             <br>";

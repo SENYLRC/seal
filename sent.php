@@ -29,12 +29,12 @@ if (isset($_REQUEST['bibtype'])) {
 if (isset($_REQUEST['pubdate'])) {
     $pubdate = $_REQUEST['pubdate'];
 }
-if (isset($_REQUEST['isbn'])) {
-    $isbn = $_REQUEST['isbn'];
-}
-if (isset($_REQUEST['issn'])) {
-    $issn = $_REQUEST['issn'];
-}
+#if (isset($_REQUEST['isbn'])) {
+#    $isbn = $_REQUEST['isbn'];
+#}
+#if (isset($_REQUEST['issn'])) {
+#    $issn = $_REQUEST['issn'];
+#}
 if (isset($_REQUEST['needbydate'])) {
     $needbydate = $_REQUEST['needbydate'];
 }
@@ -80,7 +80,9 @@ if (strlen($isbn)>2) {
 if (strlen($issn)>2) {
     $issn="ISSN: $issn";
 }
-
+if ((strlen($isbn)<2)&&(strlen($issn)<2)){
+  $isbn="ISBN: none";
+}
 
 #Requesting person library system, used for stats
 ####Pull the information of the person making the request

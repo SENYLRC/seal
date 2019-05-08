@@ -111,15 +111,15 @@ if (($_SERVER['REQUEST_METHOD'] == 'POST')   || (isset($_GET{'page'}))) {
           $system ="Ramapo Catskill Library System";
       } elseif ($system=="SE") {
           $system ="Southeastern";
-      } elseif ($system="OU") {
+      } elseif ($system=="OU") {
           $system ="Orange Ulster BOCES";
-      } elseif ($system="SB") {
+      } elseif ($system=="SB") {
           $system="Sullivan BOCES";
       } elseif ($system=="UB") {
           $system="Ulster BOCES";
       } elseif ($system=="RB") {
           $system="Rockland BOCES";
-      } elseif ($system=="DB") {
+      } elseif ($system=="DU") {
           $system="Dutchess BOCES";
       } else {
           $system="Unknow";

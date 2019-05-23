@@ -84,7 +84,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'GET')&&($recanswer=='1')) {
         if ($itemreturn==1) {
             $sql = "UPDATE `SENYLRC-SEAL2-STATS` SET `checkinTimeStamp` = '$timestamp', `checkinAccount` = '" .$wholename."'  WHERE `illNUB` = '$reqnumb'";
             if (mysqli_query($db, $sql)) {
-                echo "ILL ".$reqnumb." has been makred as being returned, <a href='/lender-history'>click here to go back to lending history</a>";
+                echo "ILL ".$reqnumb." has been marked as being returned, <a href='/lender-history'>click here to go back to lending history</a>";
             } else {
                 echo "Was not able to mark item as return, please contact Southeastern of this error";
             }

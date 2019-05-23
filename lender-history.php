@@ -256,7 +256,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $displayrenewnotes= build_renewnotes($renewNote, $renewNoteLender);
     $timestamp =     date("Y-m-d", strtotime($timestamp));
     $daysdiff = round(abs(strtotime($now)-strtotime($timestamp))/86400);
-    
+
     echo "<TR class='$rowclass'><TD>$illNUB</TD><TD>$title</br><i>$author</i></TD><TD>$itype</TD><TD>$needby</TD><TD>$reqp</br><a href='mailto:$reqemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$reql</a></TD><TD>$duedate<br>$shiptxt</TD><TD>$timestamp</TD><TD>$statustxt</TD>";
     if (($fill == 3) || (strlen($receiveAccount)<1)&&($daysdiff < '30')) {
         #Only show cancel button if request has not been answered and not received.
@@ -265,7 +265,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
         #Only show renew if someon requested a renwall
         echo"<td><a href ='/renew?num=".$illNUB."&a=1'>Aprrove renew</a><br><br><a href ='/renew?num=".$illNUB."&a=2'>Deny renew</a><br> ";
         echo "</td></tr>";
-    } elseif (($daysdiff > '30')&&(strlen($checkinAccount)<2)) {
+    } elseif (($daysdiff > '14')&&(strlen($checkinAccount)<2)) {
         echo"<td><a href ='/status?num=$illNUB&a=3'>Check Item Back In</a> ";
         echo "</td></tr>";
     } elseif ((strlen($returnAccount)<2)&&(strlen($renewAccountRequester)<1)&&(strlen($receiveAccount)>1)&&(strlen($checkinAccount)<2)) {
@@ -273,7 +273,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
         echo "<td><a href ='/renew?num=".$illNUB."&a=4'>Edit Due Date</a>";
         $timestamp =     date("Y-m-d", strtotime($timestamp));
         $daysdiff = round(abs(strtotime($now)-strtotime($timestamp))/86400);
-        if ($daysdiff > '30') {
+        if ($daysdiff > '14') {
             echo"<br><br><a href ='/status?num=$illNUB&a=3'>Check Item Back In</a> ";
         }
         echo "</td></tr>";

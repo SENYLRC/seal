@@ -30,6 +30,7 @@ $SUschoolsystem="Sullivan School Library System";
 ##Systems using Sirsi
 $RCLSpublicsystem="Ramapo-Catskill Library System";
 $dominicancollege="Dominican College";
+$nystatelibrary="New York State Library";
 
 ##Innovative Interfaces, Catalogs
 $FINKELSTEIN="Finkelstein Memorial Library";
@@ -625,7 +626,7 @@ foreach ($records->location as $location) {
             }
         }##This end the foreach statement for the MHLS catalogs
     ########This is for the Dominican College
-    } elseif ($locname == $dominicancollege) {
+  } elseif (($locname == $dominicancollege) || ($locname ==$nystatelibrary)) {
         foreach ($location->holdings->holding as $holding) {
             $mylocholding=$locname;
             $mylocalcallNumber=$holding->callNumber;

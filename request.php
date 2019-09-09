@@ -212,9 +212,12 @@ function getlibname($mylocholding)
     # echo "<!--  ".  $GETLISTSQL ." -->";
     $result=mysqli_query($db, $GETLISTSQL);
     $row = mysqli_fetch_row($result);
-    $libname[0] = $row[0];
-    $libname[1] = $GETLISTSQL;
-
+    #echo "<!--";
+    #print_r($row);
+    #echo "-->";
+    $libname = $row[0];
+    #$libname[1] = $GETLISTSQL;
+    #echo "<!--".$libname."zack-->";
     return $libname;
 }
 
@@ -471,7 +474,7 @@ foreach ($records->location as $location) {
                 #####Show this option to patron if SEAL Status is 1 and Suspendstatus is 0
                 if (($suspendstatus==0)&&($sealstatus==1)&&($itemtypecheck==1)&&($filterstatus==0)&&(strlen($destemail) > 2)) {
                     $loccount=$loccount+1;
-                    echo"<option value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
+                    echo"<option value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>". q."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
                 }
             }
         }#end for loop for Adelphi
@@ -517,7 +520,7 @@ foreach ($records->location as $location) {
                 ########Translate library alias to get libsystem
                 $libsystemq=getlibsystem($schoolloc);
                 #######Set Libname from XML data
-                $libname=$libname[0];
+                $libname=$libname;
                 $libname =htmlspecialchars($libname, ENT_QUOTES);
                 ####If we don't have a real name in database use the libary alias from the XML data
                 if (strlen($libname) <2) {
@@ -567,7 +570,7 @@ foreach ($records->location as $location) {
                     $filterstatus=0;
                 }
                 #######Set Libname from XML data
-                $libname=$libname[0];
+                $libname=$libname;
                 $libname =htmlspecialchars($libname, ENT_QUOTES);
                 ####If we don't have a real name in database use the libary alias from the XML data
                 if (strlen($libname) <2) {
@@ -607,7 +610,7 @@ foreach ($records->location as $location) {
 
                 #Translate alias to a human readable library name
                 $libname=getlibnameMHLS($mylocholding);
-                $libname=$libname[0];
+                $libname=$libname;
                 $libname =htmlspecialchars($libname, ENT_QUOTES);
                 ########Get the Library system for the destination library
                 $libsystemq=getlibsystemMHLS($mylocholding);
@@ -697,7 +700,7 @@ foreach ($records->location as $location) {
         $suspendstatus=checklib_suspend($seslcloc);
         if (($suspendstatus==0)&&($itemtypecheck==1)&&($sealstatus==1)&&(strlen($destemail) > 2)) {
             #######Set Libname from XML data
-            $libname=$libname[0];
+            $libname=$libname;
             $libname =htmlspecialchars($libname, ENT_QUOTES);
             ####If we don't have a real name in database use the libary alias from the XML data
             if (strlen($libname) <2) {

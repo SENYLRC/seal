@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')  {
                 $message = "ILL request $reqnumb for $title has been canceled <br><br>$respnote ";
                 #######Setup php email headers
                 $to=$requesterEMAIL;
-		#$to="spalding@senylrc.org";
+	    #	$to="spalding@senylrc.org";
                 $subject = "ILL Request Canceled ILL# $reqnumb  ";
                 #####SEND requerst an email to let them know the request will be filled
                 $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')  {
         ?>
        <br><br><h4>Notes about the cancelation</h4>
        <form action="/cancel" method="post">
-       <input type='hidden' name='num' value= '<? echo $reqnumb ?>' '>
+       <input type='hidden' name='num' value= '<?php echo $reqnumb ?>' '>
 	   <input type='hidden' name='fill' value='6'>
        <textarea name='respondnote' rows="4" cols="50"></textarea><br>
        <input type="submit" value="Submit">

@@ -120,6 +120,12 @@ function checkitype($mylocholding, $itemtype)
             return 1;
         }
     }
+    if ((strpos($itemtype, 'microform') !== false)) {
+        if (($row['reference']==1)) {
+            #Checking if microform  is allowed using the reference setting
+            return 1;
+        }
+    }
     if ((strpos($itemtype, 'electronic') !== false)) {
         if (($row['electronic']==1)) {
             #Checking if e books or journals is allowed

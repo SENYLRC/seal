@@ -241,7 +241,7 @@ if ($pageaction ==3) {
            } ?>> No <br>
         </td></tr>
         <tr>
-        <td><b>Reference</b><td>
+        <td><b>Reference/Microfilm</b><td>
           <input type="radio" name="reference" value="1" <?php if ($reference=="1") {
                echo "checked";
            } ?>> Yes
@@ -407,7 +407,7 @@ if ($pageaction ==3) {
           } ?>> No <br>
       </td></tr>
       <tr>
-      <td><b>Reference</b><td>
+      <td><b>Reference/Microfilm</b><td>
         <input type="radio" name="reference" value="1" <?php if ($reference=="1") {
               echo "checked";
           } ?>> Yes

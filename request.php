@@ -77,9 +77,9 @@ function checkfilter($libsystem, $profilesystem)
 ####Fuction to add color for certian available status############33
 function setavailColor ($mylocalAvailability){
 if ((strpos ($mylocalAvailability,'CHECKED IN')!==false)||(strpos ($mylocalAvailability,'AVAILABLE')!==false)||(strpos ($mylocalAvailability,'Available')!==false)){
-      $itemcolor='green';
+      $itemcolor='004200';
 }elseif ((strpos ($mylocalAvailability,'IN LIBRARY USE')!==false)||(strpos ($mylocalAvailability,'DUE')!==false)||(strpos ($mylocalAvailability,'HOLD')!==false)||(strpos ($mylocalAvailability,'/')!==false)){
-  $itemcolor='red';
+  $itemcolor='800000';
 }else{
   $itemcolor='';
 }
@@ -438,7 +438,7 @@ echo "<input type='hidden' name='issn' value= ' ".$issn ." '>";
 
 ##This will loop through all the libraries that have title and see if they should be in drop down to a make a request
 echo "<select required name='destination'>";
-echo "<option value=''> Please Select a library</option>";
+echo "<option style='background-color:#d4d4d4;'  value=''> Please Select a library</option>";
 #This variable is used to count destination libraries available to make the request
 $loccount='';
 foreach ($records->location as $location) {
@@ -521,10 +521,10 @@ foreach ($records->location as $location) {
                 #########Translates values to txt for patron on item  status
                 if ($schoolavil>0) {
                     $schooltxtavail="Not Available";
-                    $itemcolor='red';
+                    $itemcolor='800000';
                 } else {
                     $schooltxtavail="Available";
-                    $itemcolor='green';
+                    $itemcolor='004200';
                 }
                 ########Translate library alias to a real name for patron
                 $libname=getlibname($schoolloc);
@@ -542,7 +542,7 @@ foreach ($records->location as $location) {
                 $loccount=$loccount+1;
                 $mylocalcallLocation='';
                 $schoolcall1= preg_replace('/[:]/', ' ', $schoolcall1);
-                echo"<option style='color:".$itemcolor.";' value='". $schoolloc .":".$libname.":".$libsystemq.":".$schooltxtavail.":".$schoolcall1.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong>   Availability: $schooltxtavail Call Number:$schoolcall1  </option>";
+                echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $schoolloc .":".$libname.":".$libsystemq.":".$schooltxtavail.":".$schoolcall1.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong>   Availability: $schooltxtavail Call Number:$schoolcall1  </option>";
             }
         }#End looping through each of the school locations
     } elseif ($locname == $RCLSpublicsystem) {
@@ -593,7 +593,7 @@ foreach ($records->location as $location) {
                 if ($filterstatus==0) {
                     $loccount=$loccount+1;
                     $mylocalcallLocation='';
-                    echo"<option style='color:".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc." '>Library:<strong>".$libname."</strong>  [RCLS]  Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option> ";
+                    echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc." '>Library:<strong>".$libname."</strong>  [RCLS]  Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option> ";
                 }
             }
         }#end for loop for rcls
@@ -637,7 +637,7 @@ foreach ($records->location as $location) {
                 #####If they are not filtering own system show this library as a destination
                 if ($filterstatus==0) {
                     $loccount=$loccount+1;
-                    echo"<option style='color:".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> [MHLS] Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
+                    echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> [MHLS] Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
                 }
             }
         }##This end the foreach statement for the MHLS catalogs
@@ -671,7 +671,7 @@ foreach ($records->location as $location) {
             #####Show this option to patron if SEAL Status is 1 and Suspendstatus is 0
             if (($suspendstatus==0)&&($itemtypecheck==1)&&($sealstatus==1) &&(strlen($destemail) > 2)) {
                 $loccount=$loccount+1;
-                echo"<option style='color:".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc." '>Library:<strong>".$libname."</strong>   Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option> ";
+                echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc." '>Library:<strong>".$libname."</strong>   Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option> ";
             }
         }
         #########This is for the Koha catalog hosted at SENYLRC
@@ -695,10 +695,10 @@ foreach ($records->location as $location) {
         #########Translates values to txt for patron on item  status
         if (($seslcavil>0) || ($loanstatus>0)) {
             $seslcavil="Not Available";
-            $itemcolor='red';
+            $itemcolor='800000';
         } else {
             $seslcavil="Available";
-            $itemcolor='green';
+            $itemcolor='004200';
 
         }
         ########Translate library alias to a real name for patron
@@ -726,7 +726,7 @@ foreach ($records->location as $location) {
             #####Show this option to patron if SEAL Status is 1 and Suspendstatus is 0
             $loccount=$loccount+1;
             $mylocalcallLocation='';
-            echo"<option style='color:".$itemcolor.";' value='". $seslcloc.":".$libname.":".$libsystemq.":".$seslcavil.":".$seslccall.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong>   Availability: $seslcavil  Call Number:  $seslccall </option>";
+            echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $seslcloc.":".$libname.":".$libsystemq.":".$seslcavil.":".$seslccall.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong>   Availability: $seslcavil  Call Number:  $seslccall </option>";
         }
     }#end looping through Koha records
     } elseif (($locname == $SUNYR) || ($locname == $SUNYCG)  || ($locname == $SUNYS) || ($locname == $SUNYNP) || ($locname == $SUNYU) || ($locname == $SUNYO) || ($locname == $SUNYD)) {
@@ -759,7 +759,7 @@ foreach ($records->location as $location) {
                 ########Get the Library system for the destination library
                 $libsystemq=getlibsystem($libname);
                 $loccount=$loccount+1;
-                echo"<option style='color:".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
+                echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
             }#End porccesing destination library that is active in SEAL
         }##This end the foreach statement for the SUNY Catalogs
     } else {
@@ -801,7 +801,7 @@ foreach ($records->location as $location) {
                 #####If they are not filtering own system show this library as a destination
                 if ($filterstatus==0) {
                     $loccount=$loccount+1;
-                    echo"<option style='color:".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
+                    echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
                 }
             }#End porccesing destination library that is active in SEAL
         }##This end the foreach statement in the last else for catalogs

@@ -96,6 +96,10 @@ function checkitype($mylocholding, $itemtype)
     $row = $result->fetch_assoc();
     #this line is only for offline testing
     #$row = array('book' => 0, 'av' => 1, 'journal' => 1, 'reference'=>0, 'electronic'=>1);
+    if (strpos($mylocholding,'New York State Library')!== false){
+      #allow all items for the NY State Library at their request
+      return 1;
+    }
     if ((strpos($itemtype, 'book') !== false)||(strpos($itemtype, 'map') !== false)||(strpos($itemtype, 'other') !== false)) {
         if (($row['book']==1)&&(strpos($itemtype, 'elec') == false)) {
             #Checking if book is allowed

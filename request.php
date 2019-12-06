@@ -262,12 +262,12 @@ function getlibsystem($mylocholding)
     require '../seal_script/seal_db.inc';
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
-    $GETLISTSQL="SELECT system FROM `SENYLRC-SEAL2-Library-Data` where alias = '$mylocholding'";
+    $GETLISTSQL="SELECT system FROM `SENYLRC-SEAL2-Library-Data` where alias = '$mylocholding' limit 1";
     $result=mysqli_query($db, $GETLISTSQL);
     $row = mysqli_fetch_row($result);
-    $libsystemq[0] = $row[0];
-    $libsystemq[1] = $GETLISTSQL;
-    return $libsystemq[0];
+    $libsystemq = $row[0];
+
+    return $libsystemq;
 }
 
 ####Function to get lib system IDfor MHLS ##############
@@ -277,12 +277,12 @@ function getlibsystemMHLS($mylocholding)
     require '../seal_script/seal_db.inc';
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
-    $GETLISTSQL="SELECT system FROM `SENYLRC-SEAL2-Library-Data` where alias like '%$mylocholding%' ";
+    $GETLISTSQL="SELECT system FROM `SENYLRC-SEAL2-Library-Data` where alias like '%$mylocholding%' limit 1";
     $result=mysqli_query($db, $GETLISTSQL);
     $row = mysqli_fetch_row($result);
-    $libsystemq[0] = $row[0];
-    $libsystemq[1] = $GETLISTSQL;
-    return $libsystemq[0];
+    $libsystemq = $row[0];
+
+    return $libsystemq;
 }
 
 ####Function to see if library is syspended##############

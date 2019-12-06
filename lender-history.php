@@ -113,7 +113,7 @@ if ($filter_days == "all") {
 }
 
 if (strlen($filter_illnum) > 2) {
-    $SQLILL = " AND `illNUB` = '" . $filter_illnum . "'";
+    $SQLILL = " AND `illNUB` LIKE '%" . $filter_illnum . "%'";
 } else {
     $SQLILL = "";
 }
@@ -168,21 +168,21 @@ if ($filter_cancel == "yes") {
 }
 if ($filter_checkin == "yes") {
     if (strlen($SQLMIDDLE) > 2) {
-        $SQLMIDDLE = $SQLMIDDLE . "OR `checkinAccount` IS NOT NULL";
+        $SQLMIDDLE = $SQLMIDDLE . "OR `checkinAccount` IS NOT NULL ";
     } else {
-        $SQLMIDDLE = "`checkinAccount` IS NOT NULL";
+        $SQLMIDDLE = "`checkinAccount` IS NOT NULL ";
     }
 } if ($filter_recevied == "yes") {
     if (strlen($SQLMIDDLE) > 2) {
-        $SQLMIDDLE = $SQLMIDDLE . "OR `receiveAccount` IS NOT NULL AND `returnAccount` IS NULL";
+        $SQLMIDDLE = $SQLMIDDLE . "OR `receiveAccount` IS NOT NULL AND `returnAccount` IS NULL ";
     } else {
-        $SQLMIDDLE = "`receiveAccount` IS NOT NULL AND `returnAccount` IS NULL";
+        $SQLMIDDLE = "`receiveAccount` IS NOT NULL AND `returnAccount` IS NULL ";
     }
 } if ($filter_return == "yes") {
     if (strlen($SQLMIDDLE) > 2) {
-        $SQLMIDDLE = $SQLMIDDLE . "OR `returnAccount` IS NOT NULL AND `checkinAccount` IS NULL";
+        $SQLMIDDLE = $SQLMIDDLE . "OR `returnAccount` IS NOT NULL AND `checkinAccount` IS NULL ";
     } else {
-        $SQLMIDDLE = " `returnAccount` IS NOT NULL AND `checkinAccount` IS NULL";
+        $SQLMIDDLE = " `returnAccount` IS NOT NULL AND `checkinAccount` IS NULL ";
     }
 } if ($filter_renew == "yes") {
     if (strlen($SQLMIDDLE) > 2) {

@@ -114,6 +114,9 @@ if (isset($_REQUEST['journal'])) {
 if (isset($_REQUEST['ebook'])) {
     $ebook = $_REQUEST['ebook'];
 }
+if (isset($_REQUEST['ejournal'])) {
+    $ejournal = $_REQUEST['ejournal'];
+}
 if (isset($_REQUEST['reference'])) {
     $reference = $_REQUEST['reference'];
 }
@@ -175,14 +178,15 @@ if ($pageaction ==3) {
            $journal = mysqli_real_escape_string($db, $journal);
            $av = mysqli_real_escape_string($db, $av);
            $ebook = mysqli_real_escape_string($db, $ebook);
+           $ejournal = mysqli_real_escape_string($db, $ejournal);
            $reference = mysqli_real_escape_string($db, $reference);
            $oclc = mysqli_real_escape_string($db, $oclc);
            $oclc=trim($oclc);
            $loc=trim($loc);
            $libemail=trim($libemail);
            $insertsql  = "
-    INSERT INTO `$sealLIB` (`recnum`, `Name`, `ILL Email`, `alias`, `participant`, `suspend`, `system`, `phone`, `address1`, `address2`, `address3`,  `loc`, `oclc`, `book`,`journal`,`av`, `ebook`, `reference`,`ModifyDate`)
-      VALUES (NULL,'$libname','$libemail','$libalias','$participant','$suspend','$system','$phone','$address1','$address2','$address3','$loc','$oclc','$book','$journal','$av','$ebook','$reference','$timestamp')";
+    INSERT INTO `$sealLIB` (`recnum`, `Name`, `ILL Email`, `alias`, `participant`, `suspend`, `system`, `phone`, `address1`, `address2`, `address3`,  `loc`, `oclc`, `book`,`journal`,`av`, `ebook`, `ejournal`,`reference`,`ModifyDate`)
+      VALUES (NULL,'$libname','$libemail','$libalias','$participant','$suspend','$system','$phone','$address1','$address2','$address3','$loc','$oclc','$book','$journal','$av','$ebook','$ejournal','$reference','$timestamp')";
            ###Show interset on debug
            #  echo $insertsql;
            $result = mysqli_query($db, $insertsql);
@@ -258,6 +262,15 @@ if ($pageaction ==3) {
                echo "checked";
            } ?>> No <br>
         </td></tr>
+        <tr>
+        <td><b>Electronic Journal</b><td>
+          <input type="radio" name="ejournal" value="1" <?php if ($ejournal=="1") {
+               echo "checked";
+           } ?>> Yes
+          <input type="radio" name="ejournal" value="0" <?php if ($ejournal=="0") {
+               echo "checked";
+           } ?>> No <br>
+        </td></tr>
       </table>
       <br>
       <input type="submit" value="Submit">
@@ -281,6 +294,7 @@ if ($pageaction ==3) {
            $journal = mysqli_real_escape_string($db, $journal);
            $av = mysqli_real_escape_string($db, $av);
            $ebook = mysqli_real_escape_string($db, $ebook);
+           $ejournal = mysqli_real_escape_string($db, $ejournal);
            $reference = mysqli_real_escape_string($db, $reference);
            $oclc = mysqli_real_escape_string($db, $oclc);
            $oclc=trim($oclc);
@@ -293,7 +307,7 @@ if ($pageaction ==3) {
            } else {
                $enddate = date('Y-m-d', strtotime(str_replace('-', '/', $enddate)));
            }
-           $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ILL Email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',system='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book='$book',journal='$journal',av='$av',ebook='$ebook',reference='$reference',ModifyDate='$timestamp' WHERE `recnum` = '$librecnumb' ";
+           $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ILL Email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',system='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book='$book',journal='$journal',av='$av',ebook='$ebook',ejournal='$ejournal',reference='$reference',ModifyDate='$timestamp' WHERE `recnum` = '$librecnumb' ";
            #echo $sqlupdate;
            $result = mysqli_query($db, $sqlupdate);
 
@@ -321,6 +335,7 @@ if ($pageaction ==3) {
            $reference = $row["reference"];
            $av = $row["av"];
            $ebook = $row["ebook"];
+           $ejournal = $row["ejournal"];
            $journal = $row["journal"];
            $timestamp = $row["ModifyDate"];
            $enddateshow = $row["SuspendDateEnd"]; ?>
@@ -421,6 +436,15 @@ if ($pageaction ==3) {
               echo "checked";
           } ?>> Yes
         <input type="radio" name="ebook" value="0" <?php if ($ebook=="0") {
+              echo "checked";
+          } ?>> No <br>
+      </td></tr>
+      <tr>
+      <td><b>Electronic Journal</b><td>
+        <input type="radio" name="ejournal" value="1" <?php if ($ejournal=="1") {
+              echo "checked";
+          } ?>> Yes
+        <input type="radio" name="ejournal" value="0" <?php if ($ejournal=="0") {
               echo "checked";
           } ?>> No <br>
       </td></tr>

@@ -75,14 +75,15 @@ function checkfilter($libsystem, $profilesystem)
 }
 #########################################################################################There are two item type functions, one for MHLS and one for everyone else##########################################################################
 ####Fuction to add color for certian available status############33
-function setavailColor ($mylocalAvailability){
-if ((strpos ($mylocalAvailability,'CHECKED IN')!==false)||(strpos ($mylocalAvailability,'AVAILABLE')!==false)||(strpos ($mylocalAvailability,'Available')!==false)){
-      $itemcolor='004200';
-}elseif ((strpos ($mylocalAvailability,'IN LIBRARY USE')!==false)||(strpos ($mylocalAvailability,'DUE')!==false)||(strpos ($mylocalAvailability,'HOLD')!==false)||(strpos ($mylocalAvailability,'/')!==false)){
-  $itemcolor='800000';
-}else{
-  $itemcolor='';
-}
+function setavailColor($mylocalAvailability)
+{
+    if ((strpos($mylocalAvailability, 'CHECKED IN')!==false)||(strpos($mylocalAvailability, 'AVAILABLE')!==false)||(strpos($mylocalAvailability, 'Available')!==false)) {
+        $itemcolor='004200';
+    } elseif ((strpos($mylocalAvailability, 'IN LIBRARY USE')!==false)||(strpos($mylocalAvailability, 'DUE')!==false)||(strpos($mylocalAvailability, 'HOLD')!==false)||(strpos($mylocalAvailability, '/')!==false)) {
+        $itemcolor='800000';
+    } else {
+        $itemcolor='';
+    }
     return $itemcolor;
 }
 #######Function to see if item is available for loan###############################
@@ -91,14 +92,17 @@ function checkitype($mylocholding, $itemtype)
     require '../seal_script/seal_db.inc';
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
-    $GETLISTSQL="SELECT book,av,journal,reference,ebook FROM `SENYLRC-SEAL2-Library-Data` where alias = '$mylocholding'  limit 1";
+    $GETLISTSQL="SELECT book,av,journal,reference,ebook,ejournal FROM `SENYLRC-SEAL2-Library-Data` where alias = '$mylocholding'  limit 1";
+    #echo "zack $GETLISTSQL";
+    echo "zack $itemtype";
+    echo  strpos($itemtype, 'journal (electronic)');
     $result=mysqli_query($db, $GETLISTSQL);
     $row = $result->fetch_assoc();
     #this line is only for offline testing
     #$row = array('book' => 0, 'av' => 1, 'journal' => 1, 'reference'=>0, 'electronic'=>1);
-    if (strpos($mylocholding,'New York State Library')!== false){
-      #allow all items for the NY State Library at their request
-      return 1;
+    if (strpos($mylocholding, 'New York State Library')!== false) {
+        #allow all items for the NY State Library at their request
+        return 1;
     }
     if ((strpos($itemtype, 'book') !== false)||(strpos($itemtype, 'map') !== false)||(strpos($itemtype, 'other') !== false)) {
         if (($row['book']==1)&&(strpos($itemtype, 'elec') == false)) {
@@ -130,8 +134,16 @@ function checkitype($mylocholding, $itemtype)
             return 1;
         }
     }
+    #make sure to do e journals first before other e stuff
+    if ((strpos($itemtype, 'journal (electronic)') !== false)) {
+        echo "zack here";
+        if (($row['ejournal']==1)) {
+            #Checking if e journal or journals is allowed
+            return 1;
+        }
+    }
     if ((strpos($itemtype, 'electronic') !== false)) {
-        if (($row['electronic']==1)) {
+        if (($row['ebook']==1)) {
             #Checking if e books or journals is allowed
             return 1;
         }
@@ -154,7 +166,7 @@ function checkitypeMHLS($mylocholding, $itemtype)
     require '../seal_script/seal_db.inc';
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
-    $GETLISTSQL="SELECT book,av,journal,reference,ebook FROM `SENYLRC-SEAL2-Library-Data` where alias like '%$mylocholding%'  limit 1";
+    $GETLISTSQL="SELECT book,av,journal,reference,ebook,ejournal FROM `SENYLRC-SEAL2-Library-Data` where alias like '%$mylocholding%'  limit 1";
     $result=mysqli_query($db, $GETLISTSQL);
     $row = $result->fetch_assoc();
     #this line is only for offline testing
@@ -183,8 +195,15 @@ function checkitypeMHLS($mylocholding, $itemtype)
             return 1;
         }
     }
+    #make sure to do e journals first before other e stuff
+    if ((strpos($itemtype, 'journal (electronic)') !== false)) {
+        if (($row['ejournal']==1)) {
+            #Checking if e journal or journals is allowed
+            return 1;
+        }
+    }
     if ((strpos($itemtype, 'electronic') !== false)) {
-        if (($row['electronic']==1)) {
+        if (($row['ebook']==1)) {
             #Checking if e books or journals is allowed
             return 1;
         }
@@ -250,11 +269,11 @@ function getlibnameMHLS($mylocholding)
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
     $GETLISTSQL="SELECT name FROM `SENYLRC-SEAL2-Library-Data` where alias like '%$mylocholding%' limit 1 ";
-  #   echo "<!--  ".  $GETLISTSQL ." -->";
+    #   echo "<!--  ".  $GETLISTSQL ." -->";
     $result=mysqli_query($db, $GETLISTSQL);
     $row = mysqli_fetch_row($result);
     $libname = $row[0];
-  #  echo "<!--".$libname."zack-->";
+    #  echo "<!--".$libname."zack-->";
     return $libname;
 }
 
@@ -652,7 +671,7 @@ foreach ($records->location as $location) {
             }
         }##This end the foreach statement for the MHLS catalogs
     ########This is for the Dominican College
-  } elseif (($locname == $dominicancollege) || ($locname ==$nystatelibrary)) {
+    } elseif (($locname == $dominicancollege) || ($locname ==$nystatelibrary)) {
         foreach ($location->holdings->holding as $holding) {
             $mylocholding=$locname;
             $mylocalcallNumber=$holding->callNumber;
@@ -709,7 +728,6 @@ foreach ($records->location as $location) {
         } else {
             $seslcavil="Available";
             $itemcolor='004200';
-
         }
         ########Translate library alias to a real name for patron
         $libname=getlibname($seslcloc);
@@ -740,38 +758,64 @@ foreach ($records->location as $location) {
         }
     }#end looping through Koha records
     } elseif (($locname == $SUNYR) || ($locname == $SUNYCG)  || ($locname == $SUNYS) || ($locname == $SUNYNP) || ($locname == $SUNYU) || ($locname == $SUNYO) || ($locname == $SUNYD)) {
-        foreach ($location->holdings->holding as $holding) {
-            $mylocholding=$holding->localLocation;
-            $mylocalcallNumber=$holding->callNumber;
-            $mylocalAvailability=$holding->localAvailability;
-            #Remove colon from call numbers
-            $mylocalcallNumber= str_replace(':', '.', $mylocalcallNumber);
-            #This is used for the college folks more often
-            $mylocalcallLocation=$holding->shelvingLocation;
-            #Have to do this for the those who put quotes in the call number
-            $mylocalcallNumber=htmlspecialchars($mylocalcallNumber, ENT_QUOTES);
-            #Set the variable libname to the SUNY Name
-            $libname=$locname;
-            $itemcolor=setavailColor($mylocalAvailability);
-            ##############See if holding is from a SEAL Library and get email
-            $sealcheck=checklib_ill($libname);
-            $destloc=$sealcheck[0];
-            $destemail=$sealcheck[2];
-            $sealstatus=$sealcheck[1];
-            ################See if library is suspended#####################
-            $suspendstatus=checklib_suspend($libname);
-            ######Check if they will loan that item type
+        if ((strpos($itemtype, 'journal (electronic)') !== false)) {
+            foreach ($records->location->holdings as $ejrnlocation) {
+                $libname=$locname;
+                $mylocalcallNumber="Online";
+                $mylocalAvailability="Unknow";
+                ##############See if holding is from a SEAL Library and get email
+                $sealcheck=checklib_ill($libname);
+                $destloc=$sealcheck[0];
+                $destemail=$sealcheck[2];
+                $sealstatus=$sealcheck[1];
+                ################See if library is suspended#####################
+                $suspendstatus=checklib_suspend($libname);
+                ######Check if they will loan that item type
 
-            $itemtypecheck = checkitype($libname, $itemtype);
+                $itemtypecheck = checkitype($libname, $itemtype);
 
-            if (($sealstatus==1)&&($itemtypecheck==1)&& (strlen($destemail) > 2)&& ($suspendstatus==0)) {
-                #only process a library if they particate in seal and have a lending email
-                ########Get the Library system for the destination library
-                $libsystemq=getlibsystem($libname);
-                $loccount=$loccount+1;
-                echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
-            }#End porccesing destination library that is active in SEAL
-        }##This end the foreach statement for the SUNY Catalogs
+                if (($sealstatus==1)&&($itemtypecheck==1)&& (strlen($destemail) > 2)&& ($suspendstatus==0)) {
+                    #only process a library if they particate in seal and have a lending email
+                    ########Get the Library system for the destination library
+                    $libsystemq=getlibsystem($libname);
+                    $loccount=$loccount+1;
+                    echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
+                }#End porccesing destination library that is active in SEAL
+            }
+        } else {
+            foreach ($location->holdings->holding as $holding) {
+                $mylocholding=$holding->localLocation;
+                $mylocalcallNumber=$holding->callNumber;
+                $mylocalAvailability=$holding->localAvailability;
+                #Remove colon from call numbers
+                $mylocalcallNumber= str_replace(':', '.', $mylocalcallNumber);
+                #This is used for the college folks more often
+                $mylocalcallLocation=$holding->shelvingLocation;
+                #Have to do this for the those who put quotes in the call number
+                $mylocalcallNumber=htmlspecialchars($mylocalcallNumber, ENT_QUOTES);
+                #Set the variable libname to the SUNY Name
+                $libname=$locname;
+                $itemcolor=setavailColor($mylocalAvailability);
+                ##############See if holding is from a SEAL Library and get email
+                $sealcheck=checklib_ill($libname);
+                $destloc=$sealcheck[0];
+                $destemail=$sealcheck[2];
+                $sealstatus=$sealcheck[1];
+                ################See if library is suspended#####################
+                $suspendstatus=checklib_suspend($libname);
+                ######Check if they will loan that item type
+
+                $itemtypecheck = checkitype($libname, $itemtype);
+
+                if (($sealstatus==1)&&($itemtypecheck==1)&& (strlen($destemail) > 2)&& ($suspendstatus==0)) {
+                    #only process a library if they particate in seal and have a lending email
+                    ########Get the Library system for the destination library
+                    $libsystemq=getlibsystem($libname);
+                    $loccount=$loccount+1;
+                    echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
+                }#End porccesing destination library that is active in SEAL
+            }##This end the foreach statement for the SUNY Catalogs
+        }#end of item check
     } else {
         foreach ($location->holdings->holding as $holding) {
             $mylocholding=$holding->localLocation;

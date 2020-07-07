@@ -14,7 +14,7 @@ if (isset($_GET['loc'])) {
     $filter_return="";
     $filter_checkin="";
     $filter_renew="";
-    $filter_days="90";
+    $filter_days="365";
     $filter_destination="";
     $filter_illnum="";
 } else {
@@ -61,7 +61,7 @@ if (isset($_GET['loc'])) {
         $filter_return="";
         $filter_checkin="";
         $filter_renew="";
-        $filter_days="90";
+        $filter_days="365";
         $filter_destination="";
         $filter_illnum="";
     }

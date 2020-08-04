@@ -33,7 +33,6 @@ $dominicancollege="Dominican College";
 $nystatelibrary="New York State Library";
 
 ##Innovative Interfaces, Catalogs
-$FINKELSTEIN="Finkelstein Memorial Library";
 $MHLSpublicsystem="Mid-Hudson Library System";
 $MSMCcatalog="Mount St. Mary College";
 $VCcatalog="Vassar College";
@@ -93,9 +92,9 @@ function checkitype($mylocholding, $itemtype)
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
     $GETLISTSQL="SELECT book,av,journal,reference,ebook,ejournal FROM `SENYLRC-SEAL2-Library-Data` where alias = '$mylocholding'  limit 1";
-    #echo "zack $GETLISTSQL";
-    echo "zack $itemtype";
-    echo  strpos($itemtype, 'journal (electronic)');
+   #echo "zack $GETLISTSQL";
+   echo "zack $itemtype";
+   echo  strpos($itemtype, 'journal (electronic)');
     $result=mysqli_query($db, $GETLISTSQL);
     $row = $result->fetch_assoc();
     #this line is only for offline testing
@@ -136,7 +135,7 @@ function checkitype($mylocholding, $itemtype)
     }
     #make sure to do e journals first before other e stuff
     if ((strpos($itemtype, 'journal (electronic)') !== false)) {
-        echo "zack here";
+      echo "zack here";
         if (($row['ejournal']==1)) {
             #Checking if e journal or journals is allowed
             return 1;
@@ -760,27 +759,27 @@ foreach ($records->location as $location) {
     } elseif (($locname == $SUNYR) || ($locname == $SUNYCG)  || ($locname == $SUNYS) || ($locname == $SUNYNP) || ($locname == $SUNYU) || ($locname == $SUNYO) || ($locname == $SUNYD)) {
         if ((strpos($itemtype, 'journal (electronic)') !== false)) {
             foreach ($records->location->holdings as $ejrnlocation) {
-                $libname=$locname;
-                $mylocalcallNumber="Online";
+              $libname=$locname;
+              $mylocalcallNumber="Online";
                 $mylocalAvailability="Unknow";
-                ##############See if holding is from a SEAL Library and get email
-                $sealcheck=checklib_ill($libname);
-                $destloc=$sealcheck[0];
-                $destemail=$sealcheck[2];
-                $sealstatus=$sealcheck[1];
-                ################See if library is suspended#####################
-                $suspendstatus=checklib_suspend($libname);
-                ######Check if they will loan that item type
+              ##############See if holding is from a SEAL Library and get email
+              $sealcheck=checklib_ill($libname);
+              $destloc=$sealcheck[0];
+              $destemail=$sealcheck[2];
+              $sealstatus=$sealcheck[1];
+              ################See if library is suspended#####################
+              $suspendstatus=checklib_suspend($libname);
+              ######Check if they will loan that item type
 
-                $itemtypecheck = checkitype($libname, $itemtype);
+              $itemtypecheck = checkitype($libname, $itemtype);
 
-                if (($sealstatus==1)&&($itemtypecheck==1)&& (strlen($destemail) > 2)&& ($suspendstatus==0)) {
-                    #only process a library if they particate in seal and have a lending email
-                    ########Get the Library system for the destination library
-                    $libsystemq=getlibsystem($libname);
-                    $loccount=$loccount+1;
-                    echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
-                }#End porccesing destination library that is active in SEAL
+              if (($sealstatus==1)&&($itemtypecheck==1)&& (strlen($destemail) > 2)&& ($suspendstatus==0)) {
+                  #only process a library if they particate in seal and have a lending email
+                  ########Get the Library system for the destination library
+                  $libsystemq=getlibsystem($libname);
+                  $loccount=$loccount+1;
+                  echo"<option style='background-color:#d4d4d4;color:#".$itemcolor.";' value='". $mylocholding.":".$libname.":".$libsystemq.":".$mylocalAvailability.":".$mylocalcallNumber.":".$mylocalcallLocation.":".$destemail.":".$destloc."'>Library:<strong>".$libname."</strong> Availability: $mylocalAvailability  Call Number: $mylocalcallNumber</option>";
+              }#End porccesing destination library that is active in SEAL
             }
         } else {
             foreach ($location->holdings->holding as $holding) {

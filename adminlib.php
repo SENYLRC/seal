@@ -307,7 +307,7 @@ if ($pageaction ==3) {
            } else {
                $enddate = date('Y-m-d', strtotime(str_replace('-', '/', $enddate)));
            }
-           $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ILL Email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',system='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book='$book',journal='$journal',av='$av',ebook='$ebook',ejournal='$ejournal',reference='$reference',ModifyDate='$timestamp' WHERE `recnum` = '$librecnumb' ";
+           $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ILL Email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',`system`='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book='$book',journal='$journal',av='$av',ebook='$ebook',ejournal='$ejournal',reference='$reference',ModifyDate='$timestamp' WHERE `recnum` = '$librecnumb' ";
            #echo $sqlupdate;
            $result = mysqli_query($db, $sqlupdate);
 
@@ -364,7 +364,7 @@ if ($pageaction ==3) {
           if ($libsuspend=="1") {
               echo "This  Library has <strong>enable suspension</strong> until $enddateshow <br>";
           } else {
-              echo "This Library has suspension disabled";
+              echo "This Library has suspension disabled<br>";
           } ?>
     <B>Library System</b><select name="system">
                      <option value="DU" <?php if ($system=="DU") {

@@ -75,6 +75,19 @@ if (isset($_REQUEST['libalias'])) {
 if (isset($_REQUEST['libemail'])) {
     $libemail = $_REQUEST['libemail'];
 }
+if (isset($_REQUEST['libilliad'])) {
+    $libilliad = $_REQUEST['libilliad'];
+}
+if (isset($_REQUEST['$libilliadkey'])) {
+    $libilliadkey = $_REQUEST['$libilliadkey'];
+}
+
+if (isset($_REQUEST['libilliadurl'])) {
+    $libilliadurl = $_REQUEST['libilliadurl'];
+}
+if (isset($_REQUEST['$libemailalert'])) {
+    $libemailalert = $_REQUEST['$libemailalert'];
+}
 if (isset($_REQUEST['participant'])) {
     $participant = $_REQUEST['participant'];
 }
@@ -298,6 +311,7 @@ if ($pageaction ==3) {
            $reference = mysqli_real_escape_string($db, $reference);
            $oclc = mysqli_real_escape_string($db, $oclc);
            $oclc=trim($oclc);
+           $libilliadurl = mysqli_real_escape_string($db, $libilliadurl);
            $loc=trim($loc);
            $libemail=trim($libemail);
            #If suspenson is set with no end date, a default one of 7 days is calulated
@@ -307,8 +321,8 @@ if ($pageaction ==3) {
            } else {
                $enddate = date('Y-m-d', strtotime(str_replace('-', '/', $enddate)));
            }
-           $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ILL Email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',`system`='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book='$book',journal='$journal',av='$av',ebook='$ebook',ejournal='$ejournal',reference='$reference',ModifyDate='$timestamp' WHERE `recnum` = '$librecnumb' ";
-           #echo $sqlupdate;
+           $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ILL Email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',`system`='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book='$book',journal='$journal',av='$av',ebook='$ebook',ejournal='$ejournal',reference='$reference',ModifyDate='$timestamp',Illiad='$libilliad',IlliadURL='$libilliadurl',APIkey='$libilliadkey',ModEmail ='Southeastern ADMIN',LibEmailAlert='$libemailalert' WHERE `recnum` = '$librecnumb' ";
+           echo $sqlupdate;
            $result = mysqli_query($db, $sqlupdate);
 
            echo  "Library has been edited<br><br>";
@@ -324,8 +338,13 @@ if ($pageaction ==3) {
            $libemail = $row["ILL Email"];
            $phone = $row["phone"];
            $libparticipant = $row["participant"];
+           $libemailalert = $row["LibEmailAlert"];
+           $libilliad = $row["Illiad"];
+           $libilliadkey = $row["APIkey"];
            $oclc = $row["oclc"];
            $loc = $row["loc"];
+           $lastmodemail = $row["ModEmail"];
+           $libilliadurl = $row["IlliadURL"];
            $libsuspend = $row["suspend"];
            $system = $row["system"];
            $address1 = $row["address1"];
@@ -349,6 +368,18 @@ if ($pageaction ==3) {
     <B>City State Zip:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="address3" value="<?php echo $address3?>"><br>
     <B>OCLC Symbol:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="oclc" value="<?php echo $oclc?>"><br>
     <B>LOC Location:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="loc" value="<?php echo $loc?>"><br>
+      <B>Library Email Alert</b><select name="$libemailalert">  <option value="1" <?php if ($libemailalert=="1") {
+                 echo "selected=\"selected\"";
+             } ?>>Yes</option><option value="0" <?php if ($libemailalert=="0") {
+                 echo "selected=\"selected\"";
+             } ?>>No</option></select><br>
+      <B>Library ILLiad</b><select name="libilliad">  <option value="1" <?php if ($libilliad=="1") {
+                 echo "selected=\"selected\"";
+             } ?>>Yes</option><option value="0" <?php if ($libilliad=="0") {
+                 echo "selected=\"selected\"";
+             } ?>>No</option></select><br>
+    <B>ILLiad URL:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="libilliadurl" value="<?php echo $libilliadurl?>"><br>
+    <B>ILLiad API <keygen name="name" challenge="string" keytype="RSA" keyparams="medium">:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="$libilliadkey" value="<?php echo $libilliadkey?>"><br>
     <B>Library ILL participant</b><select name="participant">  <option value="1" <?php if ($libparticipant=="1") {
                echo "selected=\"selected\"";
            } ?>>Yes</option><option value="0" <?php if ($libparticipant=="0") {

@@ -118,8 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require '../seal_script/seal_db.inc';
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
-
-    ####Add escape for title, author, call number, Library name, and Requester Name
+        ####Add escape for title, author, call number, Library name, and Requester Name
     $ititle = mysqli_real_escape_string($db, $title);
     $article = mysqli_real_escape_string($db, $article);
     $iauthor = mysqli_real_escape_string($db, $author);
@@ -146,6 +145,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $destloc = trim($destloc);
     $reqLOCcode = trim($reqLOCcode);
 
+    $illiadchecksql = "SELECT IlliadURL,Illiad,APIkey,LibEmailAlert FROM `SENYLRC-SEAL2-Library-Data` WHERE `loc`='$destloc'";
+    $illiadGETLIST = mysqli_query($db, $illiadchecksql);
+    $illiadGETLISTCOUNT = '1';
+    $illiadrow = mysqli_fetch_assoc($illiadGETLIST);
+    $libilliadurl = $row["IlliadURL"];
+    $libilliad = $row["Illiad"];
+    $libilliadkey = $row["APIkey"];
+
+
+
     #####The SQL statement to insert for Stats and to recall if needed in the future
     $sql = "INSERT INTO `seal`.`SENYLRC-SEAL2-STATS` (`illNUB`,`Title`,`Author`,`pubdate`,`reqisbn`,`reqissn`,`itype`,`Call Number`,`Location`,`Available`,`article`,`needbydate`,`reqnote`,`Destination`,`DestSystem`,`Requester lib`,`Requester LOC`,`ReqSystem`,`Requester person`,`requesterEMAIL`,`Timestamp`,`Fill`,`responderNOTE`,`requesterPhone`,`saddress`,`caddress`,`shipMethod`,`returnNote`,`checkinTimeStamp`)
 VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall','$itemlocation','$itemavail','$article','$needbydate','$reqnote','$destloc','$destsystem','$inst','$reqLOCcode','$reqsystem','$fname $lname','$email','$today','3','','$wphone','$saddress','$caddress','','','')";
@@ -157,6 +166,81 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
         $yearid=date('Y');
         $illnum="$yearid-$sqlidnumb";
         $sqlupdate = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `illNUB` =  '$illnum' WHERE `index` = $sqlidnumb";
+
+        #########Send to ILLiad via API
+
+        if ($libilliad='1'){
+          #Check to make sure this is not an article request
+          if (empty($arttile)) {
+            $jsonstr = '{,
+              "Username" : '.$fname.' '. $lname.',
+              "ProcessType" : "Lending",
+              "LendingLibrary" : '.$library.',
+              "TransactionStatus": "Awaiting Request Processing",
+              "LoanTitle" : '.$ititle.',
+              "LoanAuthor" : '.$iauthor.',
+              "CallNumber" : '.$itemcall.',
+              "LoanDate" : '.$pubdate.',
+              "ILLNumber" : '.$illnum.'}';
+          }else{
+            #this is a article request
+            $jsonstr = '{,
+                  "Username" : '.$fname.' '. $lname.',
+                  "RequestType" : "Article",
+                  "ProcessType" : "Lending",
+                  "LendingLibrary" : '.$library.',
+                  "TransactionStatus": "Awaiting Request Processing",
+                  "LoanTitle" : "SENYLRC API Test for a Book",
+                  "LoanAuthor" : '.$iauthor.',
+                  "CallNumber" : '.$itemcall.',
+                  "LoanDate" : '.$pubdate.',
+
+                  "PhotoJournalTitle" : "SENYLRC API Test for an Article",
+                   "PhotoArticleTitle" : '.$arttile.',
+                   "PhotoArticleAuthor" : '.$artauthor.',
+                   "PhotoJournalVolume" : '.$artvolume.',
+                   "PhotoJournalIssue" : '.$artissue.',
+                   "PhotoJournalYear" : '.$artyear.',
+                   "PhotoJournalInclusivePages" : '.$artpage.',
+                   "ISSN": '.$issn.',
+                  "ILLNumber" : '.$illnum.'}';
+
+          }
+
+          //echo $jsonstr;
+
+        #use ILLiad
+        // variables to pass through cURL
+        define("ILLIAD_OAUTH_HOST",'.$libilliadurl');
+        define("ILLIAD_REQUEST_TOKEN_URL", ILLIAD_OAUTH_HOST . "Transaction/");
+        $key = $libilliadkey;
+        }
+        // create the cURL request
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, ILLIAD_REQUEST_TOKEN_URL);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonstr);
+        //curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // commenting this out prints to screen (via echo)
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        	"Content-Type: application/json",
+        	"Content-Length: " . strlen($jsonstr),
+        	"ApiKey: $key")
+        );
+        echo $ch;
+
+        // make the call
+        if(!curl_errno($ch)) {
+        	// $output contains the output string
+        	$output = curl_exec($ch);
+        }
+
+        // close curl resource to free up system resources
+        curl_close($ch);
+
+        // print the results of the call to the screen
+        echo json_encode($data);
+
+        ##########End send to Illiad via API
 
 
         ############################This will generate the web page response

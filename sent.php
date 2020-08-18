@@ -80,8 +80,8 @@ if (strlen($isbn)>2) {
 if (strlen($issn)>2) {
     $issn="ISSN: $issn";
 }
-if ((strlen($isbn)<2)&&(strlen($issn)<2)){
-  $isbn="ISBN: none";
+if ((strlen($isbn)<2)&&(strlen($issn)<2)) {
+    $isbn="ISBN: none";
 }
 
 #Requesting person library system, used for stats
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require '../seal_script/seal_db.inc';
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
-        ####Add escape for title, author, call number, Library name, and Requester Name
+    ####Add escape for title, author, call number, Library name, and Requester Name
     $ititle = mysqli_real_escape_string($db, $title);
     $article = mysqli_real_escape_string($db, $article);
     $iauthor = mysqli_real_escape_string($db, $author);
@@ -149,12 +149,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $illiadGETLIST = mysqli_query($db, $illiadchecksql);
     $illiadGETLISTCOUNT = '1';
     $illiadrow = mysqli_fetch_assoc($illiadGETLIST);
-    $libilliadurl = $row["IlliadURL"];
-    $libilliad = $row["Illiad"];
-    $libilliadkey = $row["APIkey"];
-
-
-
+    $libilliadurl = $illiadrow["IlliadURL"];
+    $libilliad = $illiadrow["Illiad"];
+    $libilliadkey = $illiadrow["APIkey"];
+    $libemailalert = $illiadrow["LibEmailAlert"];
     #####The SQL statement to insert for Stats and to recall if needed in the future
     $sql = "INSERT INTO `seal`.`SENYLRC-SEAL2-STATS` (`illNUB`,`Title`,`Author`,`pubdate`,`reqisbn`,`reqissn`,`itype`,`Call Number`,`Location`,`Available`,`article`,`needbydate`,`reqnote`,`Destination`,`DestSystem`,`Requester lib`,`Requester LOC`,`ReqSystem`,`Requester person`,`requesterEMAIL`,`Timestamp`,`Fill`,`responderNOTE`,`requesterPhone`,`saddress`,`caddress`,`shipMethod`,`returnNote`,`checkinTimeStamp`)
 VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall','$itemlocation','$itemavail','$article','$needbydate','$reqnote','$destloc','$destsystem','$inst','$reqLOCcode','$reqsystem','$fname $lname','$email','$today','3','','$wphone','$saddress','$caddress','','','')";
@@ -169,79 +167,54 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
 
         #########Send to ILLiad via API
 
-        if ($libilliad='1'){
-          #Check to make sure this is not an article request
-          if (empty($arttile)) {
-            $jsonstr = '{,
-              "Username" : '.$fname.' '. $lname.',
-              "ProcessType" : "Lending",
-              "LendingLibrary" : '.$library.',
-              "TransactionStatus": "Awaiting Request Processing",
-              "LoanTitle" : '.$ititle.',
-              "LoanAuthor" : '.$iauthor.',
-              "CallNumber" : '.$itemcall.',
-              "LoanDate" : '.$pubdate.',
-              "ILLNumber" : '.$illnum.'}';
-          }else{
-            #this is a article request
-            $jsonstr = '{,
-                  "Username" : '.$fname.' '. $lname.',
-                  "RequestType" : "Article",
-                  "ProcessType" : "Lending",
-                  "LendingLibrary" : '.$library.',
-                  "TransactionStatus": "Awaiting Request Processing",
-                  "LoanTitle" : "SENYLRC API Test for a Book",
-                  "LoanAuthor" : '.$iauthor.',
-                  "CallNumber" : '.$itemcall.',
-                  "LoanDate" : '.$pubdate.',
+        if ($libilliad='1') {
+            #Store data for request in array
+            if (empty($arttile)) {
+                $jsonstr = array('Username' =>jdoe , 'ProcessType'=>Lending,'LendingLibrary'=>$inst,'TransactionStatus'=>'Awaiting Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum );
+            } else {
+                $jsonstr = array('Username' =>jdoe , 'ProcessType'=>Lending,'LendingLibrary'=>$inst,'TransactionStatus'=>'Awaiting Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'PhotoArticleTitle'=>$arttile,'PhotoArticleAuthor'=>$artauthor,'PhotoJournalVolume'=>$artvolume,'PhotoJournalIssue'=>$artissue,'PhotoJournalYear'=>$artyear,'PhotoJournalInclusivePages'=>$artpage,'ISSN'=>$issn,'ILLNumber'=>$illnum );
+            }
+            #Enocde the array in to json data
+            $json_enc=json_encode($jsonstr);
 
-                  "PhotoJournalTitle" : "SENYLRC API Test for an Article",
-                   "PhotoArticleTitle" : '.$arttile.',
-                   "PhotoArticleAuthor" : '.$artauthor.',
-                   "PhotoJournalVolume" : '.$artvolume.',
-                   "PhotoJournalIssue" : '.$artissue.',
-                   "PhotoJournalYear" : '.$artyear.',
-                   "PhotoJournalInclusivePages" : '.$artpage.',
-                   "ISSN": '.$issn.',
-                  "ILLNumber" : '.$illnum.'}';
+            // just so we can see this on screen
+            //echo "<br /><br /><br />";
+            //echo $json_enc;
+            //echo "<br /><br /><br />";
 
-          }
+            // variables to pass through cURL
+            define("ILLIAD_OAUTH_HOST", $libilliadurl);
+            define("ILLIAD_REQUEST_TOKEN_URL", ILLIAD_OAUTH_HOST . "Transaction/");
+            $key = $libilliadkey;
+            // create the cURL request
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, ILLIAD_REQUEST_TOKEN_URL);
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $json_enc);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // commenting this out prints to screen (via echo)
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
+                array(
+                  "Content-Type: application/json",
+                  "Content-Length: " . strlen($json_enc),
+                  "ApiKey: $key")
+            );
 
-          //echo $jsonstr;
+            // make the call
+            if (!curl_errno($ch)) {
+                // $output contains the output string
+                $output = curl_exec($ch);
+            }
 
-        #use ILLiad
-        // variables to pass through cURL
-        define("ILLIAD_OAUTH_HOST",'.$libilliadurl');
-        define("ILLIAD_REQUEST_TOKEN_URL", ILLIAD_OAUTH_HOST . "Transaction/");
-        $key = $libilliadkey;
-        }
-        // create the cURL request
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, ILLIAD_REQUEST_TOKEN_URL);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonstr);
-        //curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // commenting this out prints to screen (via echo)
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        	"Content-Type: application/json",
-        	"Content-Length: " . strlen($jsonstr),
-        	"ApiKey: $key")
-        );
-        echo $ch;
+            // close curl resource to free up system resources
+            curl_close($ch);
 
-        // make the call
-        if(!curl_errno($ch)) {
-        	// $output contains the output string
-        	$output = curl_exec($ch);
-        }
 
-        // close curl resource to free up system resources
-        curl_close($ch);
-
-        // print the results of the call to the screen
-        echo json_encode($data);
-
-        ##########End send to Illiad via API
-
+            // print the results of the call to the screen
+            echo "<!--API output-->";
+            echo "<!--".$output."-->";
+        }#end the $libilliad check
 
         ############################This will generate the web page response
         echo "Your ILL number is $illnum, your request has been emailed to $library for the following<br>
@@ -311,6 +284,8 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
      $email<br>
      $wphone<br>
     <br>
+    <strong>Note regarding Empire Library Delivery:</strong> Please be aware that not all libraries / library systems have re-started Empire Library Delivery. Be sure to check <a href='https://docs.google.com/spreadsheets/d/1cg7-kNJ0GeJ9ZsJB01GZk_jhS8mUzGWO66gq2vbyVew/edit#gid=2039338721'>this page</a> to see an up-to-date status of <strong>Empire Library Delivery libraries</strong> before sending materials.
+    <br><br>
      Will you fill this request?  <a href='http://seal2.senylrc.org/respond?num=$illnum&a=1' >Yes</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal2.senylrc.org/respond?num=$illnum&a=0' >No</a>
      <br>";
 
@@ -320,22 +295,22 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
         $subject = html_entity_decode($subject, ENT_QUOTES, 'UTF-8');
 
 
+        #Don't send a message to destination if they don't want it
+        if ($libemailalert='1') {
+            #####SEND EMAIL to Detestation Library
+            $email_to = implode(',', $destemailarray);
+            $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
 
-        #####SEND EMAIL to Detestation Library
-        $email_to = implode(',', $destemailarray);
-        $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
-
-        $headers .= "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-
-
-        $messagedest = preg_replace('/(?<!\r)\n/', "\r\n", $messagedest);
-        $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
 
 
-        mail($email_to, $subject, $messagedest, $headers, "-f ill@senylrc.org");
+            $messagedest = preg_replace('/(?<!\r)\n/', "\r\n", $messagedest);
+            $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
 
 
+            mail($email_to, $subject, $messagedest, $headers, "-f ill@senylrc.org");
+        }
 
         #####SEND a copy of EMAIL to requester
         $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;

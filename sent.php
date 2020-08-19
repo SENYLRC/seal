@@ -214,6 +214,10 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             // print the results of the call to the screen
             echo "<!--API output-->";
             echo "<!--".$output."-->";
+            //save API output to the request
+            $sqlupdate2 = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `IlliadDataResponse` =  '$output' WHERE `index` = $sqlidnumb";
+            //echo $sqlupdate2;
+            mysqli_query($db, $sqlupdate2);
         }#end the $libilliad check
 
         ############################This will generate the web page response

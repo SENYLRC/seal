@@ -168,20 +168,50 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
         #########Send to ILLiad via API
 
         if ($libilliad='1') {
+            $sqlseloclc = "SELECT name,`ILL Email`,address2,address3,OCLC,`system` FROM `SENYLRC-SEAL2-Library-Data` WHERE `loc`='$reqLOCcode'";
+            //echo $sqlseloclc ;
+            $sqlseloclcGETLIST = mysqli_query($db, $sqlseloclc);
+            $sqlseloclcGETLISTCOUNT = '1';
+            $sqlseloclcrow = mysqli_fetch_assoc($sqlseloclcGETLIST);
+            $libreqOCLC = $sqlseloclcrow["OCLC"];
+            $libreqemail = $sqlseloclcrow["ILL Email"];
+            $libreqname = $sqlseloclcrow["name"];
+            $libreqsystem =  $sqlseloclcrow["system"];
+            $libreqaddress2 = $sqlseloclcrow["address2"];
+            $libreqaddress3 = $sqlseloclcrow["address3"];
+            $libreqaddress3=trim($libreqaddress3);
+            $libreqaddress3 = str_replace(',', '', $libreqaddress3);
+            $pieces = explode(" ", $libreqaddress3);
+            $libreqcity= $pieces[0];
+            $libreqstate= $pieces[1];
+            $libreqzip= $pieces[2];
+
+            if (strlen($libreqOCLC) <= 2) {
+                if ($system =="MH") {
+                    $libreqOCLC ="VFO";
+                } elseif ($system=="RC") {
+                    $libreqOCLC ="VGE";
+                } else {
+                    $libreqOCLC="ZSE";
+                }
+            }
+
+
             #Store data for request in array
             if (empty($arttile)) {
-                $jsonstr = array('Username' =>jdoe , 'ProcessType'=>Lending,'LendingLibrary'=>$inst,'TransactionStatus'=>'Awaiting Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum );
+                $jsonstr = array( 'Username' =>'jdoe', 'ProcessType'=>Lending,'LendingLibrary'=>'Vassar College','TransactionStatus'=>'Awaiting Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum ,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail);
             } else {
-                $jsonstr = array('Username' =>jdoe , 'ProcessType'=>Lending,'LendingLibrary'=>$inst,'TransactionStatus'=>'Awaiting Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'PhotoArticleTitle'=>$arttile,'PhotoArticleAuthor'=>$artauthor,'PhotoJournalVolume'=>$artvolume,'PhotoJournalIssue'=>$artissue,'PhotoJournalYear'=>$artyear,'PhotoJournalInclusivePages'=>$artpage,'ISSN'=>$issn,'ILLNumber'=>$illnum );
+                $jsonstr = array('Username' =>'jdoe', 'ProcessType'=>Lending,'LendingLibrary'=>'Vassar College','TransactionStatus'=>'Awaiting Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'PhotoArticleTitle'=>$arttile,'PhotoArticleAuthor'=>$artauthor,'PhotoJournalVolume'=>$artvolume,'PhotoJournalIssue'=>$artissue,'PhotoJournalYear'=>$artyear,'PhotoJournalInclusivePages'=>$artpage,'ISSN'=>$issn,'ILLNumber'=>$illnum,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail );
             }
+
+
             #Enocde the array in to json data
             $json_enc=json_encode($jsonstr);
 
-            // just so we can see this on screen
+            //just so we can see this on screen
             //echo "<br /><br /><br />";
             //echo $json_enc;
             //echo "<br /><br /><br />";
-
             // variables to pass through cURL
             define("ILLIAD_OAUTH_HOST", $libilliadurl);
             define("ILLIAD_REQUEST_TOKEN_URL", ILLIAD_OAUTH_HOST . "Transaction/");
@@ -214,8 +244,12 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             // print the results of the call to the screen
             echo "<!--API output-->";
             echo "<!--".$output."-->";
+            $output_decoded = json_decode($output, true);
+            $illiadtxnub= $output_decoded['TransactionNumber'];
+            $illstatus = $output_decoded['TransactionStatus'];
+
             //save API output to the request
-            $sqlupdate2 = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `IlliadDataResponse` =  '$output' WHERE `index` = $sqlidnumb";
+            $sqlupdate2 = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `IlliadStatus` = '$illstatus', `IlliadTransID` = '$illiadtxnub', `IlliadDataResponse` =  '$output' WHERE `index` = $sqlidnumb";
             //echo $sqlupdate2;
             mysqli_query($db, $sqlupdate2);
         }#end the $libilliad check

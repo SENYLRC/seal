@@ -167,13 +167,14 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
 
         #########Send to ILLiad via API
 
-        if ($libilliad='1') {
-            $sqlseloclc = "SELECT name,`ILL Email`,address2,address3,OCLC,`system` FROM `SENYLRC-SEAL2-Library-Data` WHERE `loc`='$reqLOCcode'";
+        if ($libilliad=='1') {
+            $sqlseloclc = "SELECT loc,name,`ILL Email`,address2,address3,OCLC,`system` FROM `SENYLRC-SEAL2-Library-Data` WHERE `loc`='$reqLOCcode'";
             //echo $sqlseloclc ;
             $sqlseloclcGETLIST = mysqli_query($db, $sqlseloclc);
             $sqlseloclcGETLISTCOUNT = '1';
             $sqlseloclcrow = mysqli_fetch_assoc($sqlseloclcGETLIST);
-            $libreqOCLC = $sqlseloclcrow["OCLC"];
+            $libreqOCLC = $sqlseloclcrow["oclc"];
+            $libreqLOC = $sqlseloclcrow["loc"];
             $libreqemail = $sqlseloclcrow["ILL Email"];
             $libreqname = $sqlseloclcrow["name"];
             $libreqsystem =  $sqlseloclcrow["system"];
@@ -186,22 +187,21 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             $libreqstate= $pieces[1];
             $libreqzip= $pieces[2];
 
-            if (strlen($libreqOCLC) <= 2) {
-                if ($system =="MH") {
-                    $libreqOCLC ="VFO";
-                } elseif ($system=="RC") {
-                    $libreqOCLC ="VGE";
-                } else {
-                    $libreqOCLC="ZSE";
-                }
-            }
-
+            $sqlilliadmp = "SELECT * FROM `SENYLRC-SEAL2-ILLIAD-ADD-MAPPING` WHERE `LOC`='$reqLOCcode' and `illiadID`='$destloc'";
+            $sqlilliadmpGETLIST = mysqli_query($db, $sqlilliadmp);
+            $sqlilliadmpGETLISTCOUNT = '1';
+            $sqlilliadmprow = mysqli_fetch_assoc($sqlilliadmpGETLIST);
+            $illiadADDnumb  = $sqlilliadmprow["illiadADDnumb"];
+            $illiadLIBSymbol =  $sqlilliadmprow["illiadLIBSymbol"];
+           #Add slashes to these string to prevent coding issue
+           $ititle=addslashes($ititle);
+            $iauthor=addslashes($iauthor);
 
             #Store data for request in array
             if (empty($arttile)) {
-                $jsonstr = array( 'Username' =>'Lending', 'ProcessType'=>Lending,'LendingLibrary'=>'Vassar','RequestType'=>'Loan','TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum ,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail);
+                $jsonstr = array( 'Username' =>'Lending','LendingString'=> 'This is a book loan', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum ,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail);
             } else {
-                $jsonstr = array('Username' =>'Lending', 'ProcessType'=>Lending,'LendingLibrary'=>'Vassar','TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'PhotoArticleTitle'=>$arttile,'PhotoArticleAuthor'=>$artauthor,'PhotoJournalVolume'=>$artvolume,'PhotoJournalIssue'=>$artissue,'PhotoJournalYear'=>$artyear,'PhotoJournalInclusivePages'=>$artpage,'ISSN'=>$issn,'ILLNumber'=>$illnum,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail );
+                $jsonstr = array('Username' =>'Lending', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'PhotoArticleTitle'=>$arttile,'PhotoArticleAuthor'=>$artauthor,'PhotoJournalVolume'=>$artvolume,'PhotoJournalIssue'=>$artissue,'PhotoJournalYear'=>$artyear,'PhotoJournalInclusivePages'=>$artpage,'ISSN'=>$issn,'ILLNumber'=>$illnum,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail );
             }
 
 
@@ -334,7 +334,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
 
 
         #Don't send a message to destination if they don't want it
-        if ($libemailalert='1') {
+        if ($libemailalert=='1') {
             #####SEND EMAIL to Detestation Library
             $email_to = implode(',', $destemailarray);
             $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;

@@ -247,19 +247,17 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             $output_decoded = json_decode($output, true);
             $illiadtxnub= $output_decoded['TransactionNumber'];
             $illstatus = $output_decoded['TransactionStatus'];
-            if (stlen($illiadtxnub)<1){
-              $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
 
+
+            if (empty($illiadtxnub)) {
+              $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
               $headers .= "MIME-Version: 1.0\r\n";
               $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-
-
-              $messagereq = "Request did not go to ILLiad Ill".$illnum." ";
+              $messagereq = "Request did not go to ILLiad Ill ".$illnum." ";
               $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
+              mail("spalding@senylrc.org", "ILLiad Failure", $messagereq, $headers, "-f noc@senylrc.org");
+            } //end check if ILLad transaction did not happen
 
-
-              mail('spalding@senylrc.org', 'ILLiad Failure', $messagereq, $headers, '-f noc@senylrc.org');
-            }
             //save API output to the request
             $sqlupdate2 = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `IlliadStatus` = '$illstatus', `IlliadTransID` = '$illiadtxnub', `IlliadDataResponse` =  '$output' WHERE `index` = $sqlidnumb";
             //echo $sqlupdate2;

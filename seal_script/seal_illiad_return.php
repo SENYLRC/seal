@@ -8,7 +8,7 @@ mysqli_select_db($db, $dbname);
 
 
 //Get data about requests from database
-$sqlselect = "SELECT *  FROM `SENYLRC-SEAL2-STATS` WHERE `IlliadStatus` LIKE '%Shipped%'";
+$sqlselect = "SELECT *  FROM `SENYLRC-SEAL2-STATS` WHERE `IlliadStatus` LIKE '%Shipped%' or `IlliadStatus` LIKE '%Awaiting%'";
 $retval = mysqli_query($db, $sqlselect);
 $GETLISTCOUNT = mysqli_num_rows($retval);
 

@@ -7,7 +7,7 @@ mysqli_select_db($db, $dbname);
 
 
 //Get data about requests from database
-$sqlselect = "SELECT *  FROM `SENYLRC-SEAL2-STATS` WHERE `IlliadStatus` LIKE '%Awaiting Lending%'";
+$sqlselect = "SELECT *  FROM `SENYLRC-SEAL2-STATS` WHERE `IlliadStatus` LIKE '%Awaiting%'";
 $retval = mysqli_query($db, $sqlselect);
 $GETLISTCOUNT = mysqli_num_rows($retval);
 
@@ -18,7 +18,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $reqnumb = $row['illNUB'];
     $destlib=$row['Destination'];
     $title = $row['Title'];
-    $requesterEMAIL=$row['requesterEMAIL'];
+    $sealFILL = $row['Fill'];
+    $requesterEMAIL = $row['requesterEMAIL'];
     //Get data about Destination library from database
     $GETLISTSQLDEST="SELECT `APIkey`, `IlliadURL`, `Name`, `ILL Email` FROM `SENYLRC-SEAL2-Library-Data` where loc like '$destlib'  limit 1";
     $resultdest=mysqli_query($db, $GETLISTSQLDEST);
@@ -28,7 +29,6 @@ while ($row = mysqli_fetch_assoc($retval)) {
         $apikey=$rowdest["APIkey"];
         $illiadURL=$rowdest["IlliadURL"];
     }
-
 
 
     //set up email headers
@@ -43,7 +43,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
     //build the curl command
     $url =$illiadURL."Transaction/".$Illiadid."";
     $cmd = "curl -H ApiKey:".$apikey." ".$url."";
-    //echo  "my cmd is ".$cmd."\n\n";
+    echo  "my cmd is ".$cmd."\n\n";
     $output = shell_exec($cmd);
 
     //decode the output from json
@@ -51,6 +51,9 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $illiadtxnub= $output_decoded['TransactionNumber'];
     $status = $output_decoded['TransactionStatus'];
     $reasonCancel = $output_decoded['ReasonForCancellation'];
+
+    $articleURL = $output_decoded['ArticleExchangeUrl'];
+    $articlePASS = $output_decoded['ArticleExchangePassword'];
     $dueDate = $output_decoded['DueDate'];
     $dueDate = strstr($dueDate, 'T', true);
     //debuging output
@@ -88,6 +91,41 @@ while ($row = mysqli_fetch_assoc($retval)) {
         $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
         mail($to, $subject, $message, $headers, "-f ill@senylrc.org");
     }
+
+    //IF request was filled via oclc
+    if (($sealFILL=='3')&&(strpos($status, 'Awaiting Article Exchange Notification') !== false)) {
+        //echo "item has been filled\n\n";
+        $sqlupdate2 = "\n UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `shipMethod`='OCLC Article Exchange', `DueDate` = 'None', `Fill` = '1' , `IlliadStatus` = 'Request Finished' WHERE `index` = $sqlidnumb\n";
+        echo $sqlupdate2;
+        //do database update and see if there was an error
+        if (mysqli_query($db, $sqlupdate2)) {
+            echo "database was updataed";
+        //if error happen let tech support know
+        } else {
+            $to = "noc@senylrc.org";
+            $message="SEAL was not able to update ILLiad status";
+            $subject = "SEALL/ILLiad Database Update Failure  ";
+            #####SEND requester an email to let them know the request will be filled
+            $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
+            $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
+            mail($to, $subject, $message, $headers, "-f ill@senylrc.org");
+        }//end check for database update
+        $message = "Your ILL request $reqnumb for $title will be filled by $destlib <br><br>Shipped via: OCLC Article Exchange<br><br>Access at the follwoing URL: ".$articleURL."<br> Password: ".$articlePASS."
+".
+                                     "<br><br>Please email <b>".$destemail_to."</b> for future communications regarding this request ";
+        #######Setup php email headers
+        $to=$requesterEMAIL;
+        $subject = "ILL Request Filled ILL# $reqnumb  ";
+        #####SEND requester an email to let them know the request will be filled
+        $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
+        $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
+        mail($to, $subject, $message, $headers, "-f ill@senylrc.org");
+    }
+
+
+
+
+
     //if request has been canceled mark it and let library know
     if ((strpos($status, 'Cancelled') !== false)&&(!empty($reasonCancel))) {
         //echo "item has been canceled\n\n";

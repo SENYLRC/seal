@@ -118,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require '../seal_script/seal_db.inc';
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
+
     ####Add escape for title, author, call number, Library name, and Requester Name
     $ititle = mysqli_real_escape_string($db, $title);
     $article = mysqli_real_escape_string($db, $article);

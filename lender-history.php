@@ -197,7 +197,7 @@ $GETLIST = mysqli_query($db, $GETLISTSQL);
 $GETLISTCOUNTwhole = mysqli_num_rows($GETLIST);
 echo "$GETLISTCOUNTwhole results<bR>";
 
-echo "<table><TR><TH width='5%'>ILL #</TH><TH width='25%'>Title / Author</TH><TH>Type</TH><TH>Need By</TH><TH>Borrower & Contact</TH><TH>Due Date & Shipping</TH><TH>Timestamp</TH><TH>Status</TH><TH>Action</TH></TR>";
+echo "<table><TR><TH width='5%'>ILL #</TH><TH width='25%'>Title / Author</TH><TH>Type</TH><TH>Need By</TH><TH>Borrower & Contact</TH><TH>Due Date & Shipping</TH><TH>Timestamp & Status</TH><TH>ILLiad ID</TH><TH>Action</TH></TR>";
 $rowtype=1;
 while ($row = mysqli_fetch_assoc($GETLIST)) {
     $illNUB = $row["illNUB"];
@@ -222,6 +222,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $checkinAccount=$row['checkinAccount'];
     $checkindate=$row['checkinTimeStamp'];
     $duedate = $row["DueDate"];
+    $illiadnumb= $row["IlliadTransID"];
     $renewNote= $row["renewNote"];
     $renewNoteLender = $row["renewNoteLender"];
     $renewAccountRequester = $row["renewAccountRequester"];
@@ -257,7 +258,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $timestamp =     date("Y-m-d", strtotime($timestamp));
     $daysdiff = round(abs(strtotime($now)-strtotime($timestamp))/86400);
 
-    echo "<TR class='$rowclass'><TD>$illNUB</TD><TD>$title</br><i>$author</i></TD><TD>$itype</TD><TD>$needby</TD><TD>$reqp</br><a href='mailto:$reqemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$reql</a></TD><TD>$duedate<br>$shiptxt</TD><TD>$timestamp</TD><TD>$statustxt</TD>";
+    echo "<TR class='$rowclass'><TD>$illNUB</TD><TD>$title</br><i>$author</i></TD><TD>$itype</TD><TD>$needby</TD><TD>$reqp</br><a href='mailto:$reqemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$reql</a></TD><TD>$duedate<br>$shiptxt</TD><TD>$timestamp<br>$statustxt</TD><TD>$illiadnumb</TD>";
     if (($fill == 3) || (strlen($receiveAccount)<1)&&($daysdiff < '30')) {
         #Only show cancel button if request has not been answered and not received.
         echo "<TD><a href='/respond?num=$illNUB&a=1'>Fill</a><br><br><a href='/respond?num=$illNUB&a=0'>Not Fill</a></TD></TR> ";

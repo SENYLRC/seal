@@ -304,7 +304,7 @@ echo "<input type=Submit value=Update><br>";
 echo "</p>";
 echo "</form>";
 
-echo "<table><TR><TH width='5%'>ILL #</TH><TH width='25%'>Title / Author</TH><TH>Type</TH><TH>Need By</TH><TH>Lender</TH><TH>Borrower</TH><TH>Due Date & Shipping</TH><TH>Timestamp</TH><TH>Status</TH></TR>";
+echo "<table><TR><TH width='5%'>ILL #</TH><TH width='25%'>Title / Author</TH><TH>Type</TH><TH>Need By</TH><TH>Lender</TH><TH>Borrower</TH><TH>Due Date & Shipping & ILLiad #</TH><TH>Timestamp</TH><TH>Status</TH></TR>";
 $rowtype=1;
 while ($row = mysqli_fetch_assoc($GETLIST)) {
     $illNUB = $row["illNUB"];
@@ -331,6 +331,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $checkinAccount=$row['checkinAccount'];
     $checkindate=$row['checkinTimeStamp'];
     $duedate = $row["DueDate"];
+    $illiadnumb= $row["IlliadTransID"];
     $renewNote= $row["renewNote"];
     $renewNoteLender = $row["renewNoteLender"];
     $renewAccountRequester = $row["renewAccountRequester"];
@@ -358,7 +359,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $displaynotes=build_notes($reqnote, $lendnote);
     $dispalyreturnnotes=build_return_notes($returnnote, $returnmethodtxt);
     $displayrenewnotes= build_renewnotes($renewNote, $renewNoteLender);
-    echo "<TR class='$rowclass'><TD>$illNUB</TD><TD>$title</br><i>$author</i></TD><TD>$itype</TD><TD>$needby</TD><TD><a href='mailto:$destemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$dest</a></br><i>$destsys</i></TD><TD><a href='mailto:$reqemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$reqp</a></br>$reql</br><i>$reqsys</i></TD><TD>$duedate<br>$shiptxt</TD><TD>$timestamp</TD><TD>$statustxt</TD></TR> ";
+    echo "<TR class='$rowclass'><TD>$illNUB</TD><TD>$title</br><i>$author</i></TD><TD>$itype</TD><TD>$needby</TD><TD><a href='mailto:$destemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$dest</a></br><i>$destsys</i></TD><TD><a href='mailto:$reqemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$reqp</a></br>$reql</br><i>$reqsys</i></TD><TD>$duedate<br>$shiptxt<br>$illiadnumb</TD><TD>$timestamp</TD><TD>$statustxt</TD></TR> ";
     if ((strlen($reqnote) > 2) || (strlen($lendnote) > 2)) {
         echo "<TR class='$rowclass'><TD></TD><TD></TD><TD colspan=8>$displaynotes</TD></TR>";
     }

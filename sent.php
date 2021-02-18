@@ -29,12 +29,12 @@ if (isset($_REQUEST['bibtype'])) {
 if (isset($_REQUEST['pubdate'])) {
     $pubdate = $_REQUEST['pubdate'];
 }
-#if (isset($_REQUEST['isbn'])) {
-#    $isbn = $_REQUEST['isbn'];
-#}
-#if (isset($_REQUEST['issn'])) {
-#    $issn = $_REQUEST['issn'];
-#}
+if (isset($_REQUEST['isbn'])) {
+    $isbn = $_REQUEST['isbn'];
+}
+if (isset($_REQUEST['issn'])) {
+    $issn = $_REQUEST['issn'];
+}
 if (isset($_REQUEST['needbydate'])) {
     $needbydate = $_REQUEST['needbydate'];
 }
@@ -198,13 +198,24 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             $ititle=addslashes($ititle);
             $iauthor=addslashes($iauthor);
 
-            #Store data for request in array
-            if (empty($arttile)) {
-                $jsonstr = array( 'Username' =>'Lending','LendingString'=> 'This is a book loan', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum ,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail);
+            if ($reqLOCcode=='nnepsu') {
+                //if this is New Paltz we will set some fields
+                #Store data for request in array
+                if (empty($arttile)) {
+                    $jsonstr = array( 'Username' =>'Lending','WantedBy'=>'SEAL Request: This is a book loan','LendingString'=> 'This is a book loan', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'SpecIns'=>'ELD - MID-HUDSON','TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum ,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail);
+                } else {
+                    $jsonstr = array('Username' =>'Lending', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'PhotoArticleTitle'=>$arttile,'PhotoArticleAuthor'=>$artauthor,'PhotoJournalVolume'=>$artvolume,'PhotoJournalIssue'=>$artissue,'PhotoJournalYear'=>$artyear,'PhotoJournalInclusivePages'=>$artpage,'ISSN'=>$issn,'ILLNumber'=>$illnum,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail );
+                }
             } else {
-                $jsonstr = array('Username' =>'Lending', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'PhotoArticleTitle'=>$arttile,'PhotoArticleAuthor'=>$artauthor,'PhotoJournalVolume'=>$artvolume,'PhotoJournalIssue'=>$artissue,'PhotoJournalYear'=>$artyear,'PhotoJournalInclusivePages'=>$artpage,'ISSN'=>$issn,'ILLNumber'=>$illnum,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail );
-            }
+                //go with defualts
 
+                #Store data for request in array
+                if (empty($arttile)) {
+                    $jsonstr = array( 'Username' =>'Lending','LendingString'=> 'This is a book loan', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum ,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail);
+                } else {
+                    $jsonstr = array('Username' =>'Lending', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'PhotoArticleTitle'=>$arttile,'PhotoArticleAuthor'=>$artauthor,'PhotoJournalVolume'=>$artvolume,'PhotoJournalIssue'=>$artissue,'PhotoJournalYear'=>$artyear,'PhotoJournalInclusivePages'=>$artpage,'ISSN'=>$issn,'ILLNumber'=>$illnum,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail );
+                }
+            }
 
             #Enocde the array in to json data
             $json_enc=json_encode($jsonstr);
@@ -214,8 +225,9 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             //echo $json_enc;
             //echo "<br /><br /><br />";
             // variables to pass through cURL
-            define("ILLIAD_OAUTH_HOST", $libilliadurl);
-            define("ILLIAD_REQUEST_TOKEN_URL", ILLIAD_OAUTH_HOST . "Transaction/");
+
+            define("ILLIAD_REQUEST_TOKEN_URL", $libilliadurl);
+
             $key = $libilliadkey;
             // create the cURL request
             $ch = curl_init();

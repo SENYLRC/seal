@@ -437,6 +437,8 @@ $isbn=$records->{'md-isbn'};
 $issn=$records->location->{'md-issn'};
 
 $requestedauthor = preg_replace('/[[:^print:]]/', '', $requestedauthor);
+$requestedtitle = preg_replace('/[[:^print:]]/', '', $requestedtitle);
+$requestedtitle2 = preg_replace('/[[:^print:]]/', '', $requestedtitle2);
 echo "Requested Title:<b>: " . $requestedtitle  ."  ". $requestedtitle2 . "</b><br>";
 echo "Requested Author:<b>: " . $requestedauthor ."</b><br>";
 echo "Item Type:  " . $itemtype."<br>";

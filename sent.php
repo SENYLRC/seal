@@ -267,15 +267,30 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
                 $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
                 $headers .= "MIME-Version: 1.0\r\n";
                 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                $messagereq = "Request did not go to ILLiad Ill ".$illnum." ";
+                $messagereq = "Request did not go to ILLiad Ill ".$illnum." ".$output." ";
                 $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
                 mail("spalding@senylrc.org", "ILLiad Failure", $messagereq, $headers, "-f noc@senylrc.org");
             } //end check if ILLad transaction did not happen
 
+
+
+
             //save API output to the request
             $sqlupdate2 = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `IlliadStatus` = '$illstatus', `IlliadTransID` = '$illiadtxnub', `IlliadDataResponse` =  '$output' WHERE `index` = $sqlidnumb";
             //echo $sqlupdate2;
-            mysqli_query($db, $sqlupdate2);
+
+          if (mysqli_query($db, $sqlupdate2)) {
+             //mysqli_query($db, $sqlupdate2);
+                //no error and everthing is fine
+          } else {
+              #Something happen and could not update request, will email the sql to admin
+              $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
+              $headers .= "MIME-Version: 1.0\r\n";
+              $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+              $messagereq = "UPDATE SENYLRC-SEAL2-STATS SET IlliadStatus = ".$illstatus.", IlliadTransID = ".$illiadtxnub.", IlliadDataResponse =  ".$output." WHERE index = ".$sqlidnumb." ";
+              $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
+              mail("spalding@senylrc.org", "sql update Failure", $messagereq, $headers, "-f noc@senylrc.org");
+          }
         }#end the $libilliad check
 
         ############################This will generate the web page response

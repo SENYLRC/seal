@@ -36,9 +36,9 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
     //Check if working with NewPaltz and remove SEAL from end of URL
-     if (strpos($illiadURL, 'newpaltz.edu') !== false) {
-     $illiadURL=substr($illiadURL, 0, -5);
-     }
+    if (strpos($illiadURL, 'newpaltz.edu') !== false) {
+        $illiadURL=substr($illiadURL, 0, -5);
+    }
 
     //build the curl command
     $url =$illiadURL." ".$Illiadid."";

@@ -4,8 +4,6 @@ require 'seal_db.inc';
 $db = mysqli_connect($dbhost, $dbuser, $dbpass);
 mysqli_select_db($db, $dbname);
 
-
-
 //Get data about requests from database
 $sqlselect = "SELECT *  FROM `SENYLRC-SEAL2-STATS` WHERE `IlliadStatus` LIKE '%Awaiting%'";
 $retval = mysqli_query($db, $sqlselect);
@@ -40,8 +38,14 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $destemailarray = explode(';', $destemail);
     $destemail_to = implode(',', $destemailarray);
     echo "\n\n emails: ".$destemail_to ."\n\n";
+     //Check if working with NewPaltz and remove SEAL from end of URL
+     if (strpos($illiadURL, 'newpaltz.edu') !== false) {
+     $illiadURL=substr($illiadURL, 0, -5);
+     }
+
     //build the curl command
-    $url =$illiadURL."Transaction/".$Illiadid."";
+    $url =$illiadURL." ".$Illiadid."";
+    $url = str_replace(' ', '', $url);
     $cmd = "curl -H ApiKey:".$apikey." ".$url."";
     echo  "my cmd is ".$cmd."\n\n";
     $output = shell_exec($cmd);
@@ -95,7 +99,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
     //IF request was filled via oclc
     if (($sealFILL=='3')&&(strpos($status, 'Awaiting Article Exchange Notification') !== false)) {
         //echo "item has been filled\n\n";
-        $sqlupdate2 = "\n UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `shipMethod`='OCLC Article Exchange', `DueDate` = 'None', `Fill` = '1' , `IlliadStatus` = 'Request Finished' WHERE `index` = $sqlidnumb\n";
+        $sqlupdate2 = "\n UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `shipMethod`='OCLC Article Exchange', `DueDate` = 'None', `Fill` = '1' , `IlliadStatus` = 'Request Finished' WHERE `index` = $sqlidnumb\n
+";
         echo $sqlupdate2;
         //do database update and see if there was an error
         if (mysqli_query($db, $sqlupdate2)) {
@@ -110,7 +115,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
             $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
             mail($to, $subject, $message, $headers, "-f ill@senylrc.org");
         }//end check for database update
-        $message = "Your ILL request $reqnumb for $title will be filled by $destlib <br><br>Shipped via: OCLC Article Exchange<br><br>Access at the follwoing URL: ".$articleURL."<br> Password: ".$articlePASS."
+        $message = "Your ILL request $reqnumb for $title will be filled by $destlib <br><br>Shipped via: OCLC Article Exchange<br><br>Access at the follwoing URL: ".$articleURL."<br> Password: ".$article
+PASS."
 ".
                                      "<br><br>Please email <b>".$destemail_to."</b> for future communications regarding this request ";
         #######Setup php email headers

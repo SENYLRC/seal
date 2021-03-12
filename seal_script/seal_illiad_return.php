@@ -44,7 +44,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $url =$illiadURL." ".$Illiadid."";
     $url = str_replace(' ', '', $url);
     $cmd = "curl -H ApiKey:".$apikey." ".$url."";
-    //echo  "my cmd is ".$cmd."\n\n";
+    echo  "my cmd is ".$cmd."\n\n";
     $output = shell_exec($cmd);
 
     //decode the output from json

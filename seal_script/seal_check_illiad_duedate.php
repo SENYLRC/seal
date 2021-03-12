@@ -8,7 +8,7 @@ mysqli_select_db($db, $dbname);
 
 
 //Get data about requests from database
-$sqlselect = "SELECT *  FROM `SENYLRC-SEAL2-STATS` WHERE `IlliadStatus` LIKE '%Shipped%' or `IlliadStatus` LIKE '%Awaiting%'";
+$sqlselect = "SELECT *  FROM `SENYLRC-SEAL2-STATS` WHERE `IlliadStatus` LIKE '%Shipped%' or `IlliadStatus` LIKE '%Shipped%'";
 $retval = mysqli_query($db, $sqlselect);
 $GETLISTCOUNT = mysqli_num_rows($retval);
 
@@ -19,7 +19,6 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $reqnumb = $row['illNUB'];
     $destlib=$row['Destination'];
     $title = $row['Title'];
-    $requesterEMAIL=$row['requesterEMAIL'];
     //Get data about Destination library from database
     $GETLISTSQLDEST="SELECT `APIkey`, `IlliadURL`, `Name`, `ILL Email` FROM `SENYLRC-SEAL2-Library-Data` where loc like '$destlib'  limit 1";
     $resultdest=mysqli_query($db, $GETLISTSQLDEST);
@@ -29,12 +28,6 @@ while ($row = mysqli_fetch_assoc($retval)) {
         $illiadURL=$rowdest["IlliadURL"];
     }
 
-
-
-    //set up email headers
-    $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
-    $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
     //Check if working with NewPaltz and remove SEAL from end of URL
     if (strpos($illiadURL, 'newpaltz.edu') !== false) {
         $illiadURL=substr($illiadURL, 0, -5);
@@ -61,16 +54,20 @@ while ($row = mysqli_fetch_assoc($retval)) {
     //echo "Due Date ".$dueDate."\n";
 
 
-    //IF request was filled mark it as fill and send out email
-    if (strpos($status, 'Request Finished') !== false) {
-        // echo "item has been filled\n\n";
-        $sqlupdate2 = "\n UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `checkinAccount`='ILLiad',`returnAccount` = 'ILLiad', `IlliadStatus` = '$status' WHERE `index` = $sqlidnumb\n";
+    //IF request was finished, mark that in database
+    if (strpos($status, 'Item Shipped') !== false) {
+        // echo "item has been finished\n\n";
+        $sqlupdate2 = "\n UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `checkinAccount`='ILLiad',`returnAccount` = 'ILLiad', `DueDate` = '$dueDate' WHERE `index` = $sqlidnumb\n";
         echo $sqlupdate2;
         //do database update and see if there was an error
         if (mysqli_query($db, $sqlupdate2)) {
             echo "database was updataed";
         //if error happen let tech support know
         } else {
+            //set up email headers
+            $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
             $to = "noc@senylrc.org";
             $message="SEAL was not able to update ILLiad status";
             $subject = "SEALL/ILLiad Database Update Failure  ";

@@ -35,9 +35,14 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
     $headers .= "MIME-Version: 1.0\r\n";
     $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+    //Check if working with NewPaltz and remove SEAL from end of URL
+     if (strpos($illiadURL, 'newpaltz.edu') !== false) {
+     $illiadURL=substr($illiadURL, 0, -5);
+     }
 
     //build the curl command
-    $url =$illiadURL."Transaction/".$Illiadid."";
+    $url =$illiadURL." ".$Illiadid."";
+    $url = str_replace(' ', '', $url);
     $cmd = "curl -H ApiKey:".$apikey." ".$url."";
     //echo  "my cmd is ".$cmd."\n\n";
     $output = shell_exec($cmd);
@@ -50,8 +55,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $dueDate = $output_decoded['DueDate'];
     $dueDate = strstr($dueDate, 'T', true);
     //debuging output
-    //echo "Trans Numb ".$illiadtxnub."\n";
-    //echo "Status ".$status."\n";
+    echo "Trans Numb ".$illiadtxnub."\n";
+    echo "Status ".$status."\n";
     //echo "Cancel Reason ".$reasonCancel."\n";
     //echo "Due Date ".$dueDate."\n";
 

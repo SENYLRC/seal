@@ -276,7 +276,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
 
 
             //save API output to the request
-            $sqlupdate2 = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `IlliadStatus` = '$illstatus', `IlliadTransID` = '$illiadtxnub', `IlliadDataResponse` =  '$output' WHERE `index` = $sqlidnumb";
+            $sqlupdate2 = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `IlliadStatus` = '$illstatus', `IlliadTransID` = '$illiadtxnub' WHERE `index` = $sqlidnumb";
             //echo $sqlupdate2;
 
           if (mysqli_query($db, $sqlupdate2)) {
@@ -287,7 +287,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
               $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
               $headers .= "MIME-Version: 1.0\r\n";
               $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-              $messagereq = "UPDATE SENYLRC-SEAL2-STATS SET IlliadStatus = ".$illstatus.", IlliadTransID = ".$illiadtxnub.", IlliadDataResponse =  ".$output." WHERE index = ".$sqlidnumb." ";
+              $messagereq = "UPDATE SENYLRC-SEAL2-STATS SET IlliadStatus = ".$illstatus.", IlliadTransID = ".$illiadtxnub." WHERE index = ".$sqlidnumb." ";
               $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
               mail("spalding@senylrc.org", "sql update Failure", $messagereq, $headers, "-f noc@senylrc.org");
           }

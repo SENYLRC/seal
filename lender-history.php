@@ -264,7 +264,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
         echo "<TD><a href='/respond?num=$illNUB&a=1'>Fill</a><br><br><a href='/respond?num=$illNUB&a=0'>Not Fill</a></TD></TR> ";
     } elseif ((strlen($returnAccount)<2)&&($fill== 1)&&($renewAnswer==0)&&(strlen($renewAccountRequester)>1)&&(strlen($checkinAccount)<2)) {
         #Only show renew if someon requested a renwall
-        echo"<td><a href ='/renew?num=".$illNUB."&a=1'>Aprrove renew</a><br><br><a href ='/renew?num=".$illNUB."&a=2'>Deny renew</a><br> ";
+        echo"<td><a href ='/renew?num=".$illNUB."&a=1'>Approve Renewal</a><br><br><a href ='/renew?num=".$illNUB."&a=2'>Deny Renewal</a><br> ";
         echo "</td></tr>";
     } elseif (($daysdiff > '14')&&(strlen($checkinAccount)<2)) {
         echo"<td><a href ='/status?num=$illNUB&a=3'>Check Item Back In</a> ";

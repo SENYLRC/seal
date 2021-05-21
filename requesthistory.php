@@ -249,7 +249,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
         echo"<td><a href ='/status?num=$illNUB&a=1'>Received Item</a></td></tr> ";
     } elseif (($fill== 1)&&(strlen($receiveaccount)>1)&&(strlen($returnaccount)<1)) {
         #Only show renew and return if request was recived but not returned
-        echo"<td><a href ='/renew?num=".$illNUB."&a=3'>Request a renew</a><br><br><a href ='/status?num=".$illNUB."&a=2'>Return Item</a></td></tr> ";
+        echo"<td><a href ='/renew?num=".$illNUB."&a=3'>Request a Renewal</a><br><br><a href ='/status?num=".$illNUB."&a=2'>Return Item</a></td></tr> ";
     } elseif (($fill== 1)&&(strlen($receiveaccount)>1)&&($renewAnswer!=0)&&(strlen($returnaccount)<1)) {
         #Only show renew and return if request was recived but not returned
         echo"<td><a href ='/status?num=".$illNUB."&a=2'>Return Item</a></td></tr> ";

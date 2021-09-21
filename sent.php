@@ -8,7 +8,9 @@ $address=$_REQUEST["address"];
 $caddress=$_REQUEST["caddress"];
 $wphone=$_REQUEST["wphone"];
 
-
+//remove white space from database
+$email = str_replace(' ', '', $email);
+$wphone = str_replace(' ', '', $wphone);
 
 
 if (isset($_REQUEST['reqLOCcode'])) {

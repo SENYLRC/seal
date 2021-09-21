@@ -892,7 +892,7 @@ if ($loccount>0) {
     echo "<input type=Submit value=Submit> ";
 ########If we have no locations don't show submit and display error###########
 } else {
-    echo "<br><br>Sorry, no available library to route your request at this time.  <a href='https://seal2.senylrc.org'>Would you like to try another search ?</a>";
+    echo "<br><br>Sorry, no available library to route your request at this time.  <a href='https://seal.senylrc.org'>Would you like to try another search ?</a>";
 }
 ?>
 </form>

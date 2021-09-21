@@ -204,7 +204,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
                 //if this is New Paltz we will set some fields
                 #Store data for request in array
                 if (empty($arttile)) {
-                     //set the special instruction to the correct lib systems
+                    //set the special instruction to the correct lib systems
                     $specialinst= "ELD - ".$destsystem." ";
                     $jsonstr = array( 'Username' =>'Lending','WantedBy'=>'SEAL Request: This is a book loan','LendingString'=> 'This is a book loan', 'ProcessType'=>Lending,'LenderAddressNumber'=>$illiadADDnumb,'LendingLibrary'=>$illiadLIBSymbol,'SpecIns'=>$specialinst,'TransactionStatus'=>'Awaiting Lending Request Processing','LoanTitle'=>$ititle,'LoanAuthor'=>$iauthor,'CallNumber'=>$itemcall,'LoanDate'=>$pubdate,'ILLNumber'=>$illnum ,'TAddress'=>$libreqname,'TAddress2'=>$libreqaddress2,'TCity'=>$libreqcity,'TState'=>$libreqcity,'TZip'=>$libreqzip,'TEMailAddress'=>$libreqemail);
                 } else {
@@ -281,18 +281,18 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             $sqlupdate2 = "UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `IlliadStatus` = '$illstatus', `IlliadTransID` = '$illiadtxnub' WHERE `index` = $sqlidnumb";
             //echo $sqlupdate2;
 
-          if (mysqli_query($db, $sqlupdate2)) {
-             //mysqli_query($db, $sqlupdate2);
+            if (mysqli_query($db, $sqlupdate2)) {
+                //mysqli_query($db, $sqlupdate2);
                 //no error and everthing is fine
-          } else {
-              #Something happen and could not update request, will email the sql to admin
-              $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
-              $headers .= "MIME-Version: 1.0\r\n";
-              $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-              $messagereq = "UPDATE SENYLRC-SEAL2-STATS SET IlliadStatus = ".$illstatus.", IlliadTransID = ".$illiadtxnub." WHERE index = ".$sqlidnumb." ";
-              $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
-              mail("spalding@senylrc.org", "sql update Failure", $messagereq, $headers, "-f noc@senylrc.org");
-          }
+            } else {
+                #Something happen and could not update request, will email the sql to admin
+                $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
+                $headers .= "MIME-Version: 1.0\r\n";
+                $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                $messagereq = "UPDATE SENYLRC-SEAL2-STATS SET IlliadStatus = ".$illstatus.", IlliadTransID = ".$illiadtxnub." WHERE index = ".$sqlidnumb." ";
+                $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
+                mail("spalding@senylrc.org", "sql update Failure", $messagereq, $headers, "-f noc@senylrc.org");
+            }
         }#end the $libilliad check
 
         ############################This will generate the web page response
@@ -329,7 +329,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
       Availability Status: $itemavail<br>
       Location: $itemlocation<br>
        $article<br><br>
-     <a href='http://seal2.senylrc.org/cancel?num=$illnum&a=3' >Do you need to cancel this request? </a>
+     <a href='http://seal.senylrc.org/cancel?num=$illnum&a=3' >Do you need to cancel this request? </a>
      <br><br>
        The title is requested by the following library:<br>
       $inst<br>
@@ -365,7 +365,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
     <br>
     <strong>Note regarding Empire Library Delivery:</strong> Please be aware that not all libraries / library systems have re-started Empire Library Delivery. Be sure to check <a href='https://docs.google.com/spreadsheets/d/1cg7-kNJ0GeJ9ZsJB01GZk_jhS8mUzGWO66gq2vbyVew/edit#gid=2039338721'>this page</a> to see an up-to-date status of <strong>Empire Library Delivery libraries</strong> before sending materials.
     <br><br>
-     Will you fill this request?  <a href='http://seal2.senylrc.org/respond?num=$illnum&a=1' >Yes</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal2.senylrc.org/respond?num=$illnum&a=0' >No</a>
+     Will you fill this request?  <a href='http://seal.senylrc.org/respond?num=$illnum&a=1' >Yes</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/respond?num=$illnum&a=0' >No</a>
      <br>";
 
         #######Set email subject for request
@@ -405,7 +405,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
         mail($email, $subject, $messagereq, $headers, "-f ill@senylrc.org");
 
         #########Ask the requester if they would like to do another request
-        echo "<br><br><a href='http://seal2.senylrc.org'>Would you like to do another request?<a><br>";
+        echo "<br><br><a href='http://seal.senylrc.org'>Would you like to do another request?<a><br>";
     } else {
         #Something happen and could not create a requiest
         echo "Error: " . $sql . "<br>" . mysqli_error($db);

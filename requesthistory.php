@@ -75,7 +75,7 @@ echo "<input type='checkbox' name='filter_no' value='yes' " . checked($filter_no
 echo "<input type='checkbox' name='filter_noans' value='yes' " . checked($filter_noans) . ">No Answer  ";
 echo "<input type='checkbox' name='filter_expire' value='yes' " . checked($filter_expire) . ">Expired  ";
 echo "<input type='checkbox' name='filter_cancel' value='yes' " . checked($filter_cancel) . ">Canceled  ";
-echo "<input type='checkbox' name='filter_recevied' value='yes' " . checked($filter_recevied) . ">Recevied  ";
+echo "<input type='checkbox' name='filter_recevied' value='yes' " . checked($filter_recevied) . ">Received  ";
 echo "<input type='checkbox' name='filter_return' value='yes' " . checked($filter_return) . ">Return  ";
 echo "<input type='checkbox' name='filter_checkin' value='yes' " . checked($filter_checkin) . ">Check In  ";
 echo "for ";

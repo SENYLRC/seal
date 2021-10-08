@@ -38,10 +38,10 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $destemailarray = explode(';', $destemail);
     $destemail_to = implode(',', $destemailarray);
     echo "\n\n emails: ".$destemail_to ."\n\n";
-     //Check if working with NewPaltz and remove SEAL from end of URL
-     if (strpos($illiadURL, 'newpaltz.edu') !== false) {
-     $illiadURL=substr($illiadURL, 0, -5);
-     }
+    //Check if working with NewPaltz and remove SEAL from end of URL
+    if (strpos($illiadURL, 'newpaltz.edu') !== false) {
+        $illiadURL=substr($illiadURL, 0, -5);
+    }
 
     //build the curl command
     $url =$illiadURL." ".$Illiadid."";
@@ -99,8 +99,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
     //IF request was filled via oclc
     if (($sealFILL=='3')&&(strpos($status, 'Awaiting Article Exchange Notification') !== false)) {
         //echo "item has been filled\n\n";
-        $sqlupdate2 = "\n UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `shipMethod`='OCLC Article Exchange', `DueDate` = 'None', `Fill` = '1' , `IlliadStatus` = 'Request Finished' WHERE `index` = $sqlidnumb\n
-";
+        $sqlupdate2 = "\n UPDATE `seal`.`SENYLRC-SEAL2-STATS` SET `shipMethod`='OCLC Article Exchange', `DueDate` = 'None', `Fill` = '1' , `IlliadStatus` = 'Request Finished' WHERE `index` = $sqlidnumb\n";
         echo $sqlupdate2;
         //do database update and see if there was an error
         if (mysqli_query($db, $sqlupdate2)) {
@@ -115,10 +114,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
             $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
             mail($to, $subject, $message, $headers, "-f ill@senylrc.org");
         }//end check for database update
-        $message = "Your ILL request $reqnumb for $title will be filled by $destlib <br><br>Shipped via: OCLC Article Exchange<br><br>Access at the follwoing URL: ".$articleURL."<br> Password: ".$article
-PASS."
-".
-                                     "<br><br>Please email <b>".$destemail_to."</b> for future communications regarding this request ";
+        $message = "Your ILL request $reqnumb for $title will be filled by $destlib <br><br>Shipped via: OCLC Article Exchange<br><br>Access at the follwoing URL: ".$articleURL."<br> Password: ".$articlePASS.""."<br><br>Please email <b>".$destemail_to."</b> for future communications regarding this request ";
         #######Setup php email headers
         $to=$requesterEMAIL;
         $subject = "ILL Request Filled ILL# $reqnumb  ";
@@ -151,6 +147,10 @@ PASS."
             $reasontxt='Not on shelf';
             $nofillreason="23";
         }
+        if (strpos($reasonCancel, '') !== false) {
+            $reasontxt='Poor condition';
+            $nofillreason="24";
+        }
         if (empty($nofillreason)) {
             $nofillreason="0";
             $reasontxt="not specified";
@@ -178,6 +178,10 @@ PASS."
                 "<br><br> <a href='http://seal.senylrc.org'>Would you like to try a different library</a>?";
         #######Setup php email headers
         $to=$requesterEMAIL;
+        //set up email headers
+        $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
+        $headers .= "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
         //$to = "spalding@senylrc.org";
         $subject = "ILL Request Not Filled ILL# $reqnumb  ";
         #####SEND requester an email to let them know the request will be filled

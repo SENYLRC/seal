@@ -94,7 +94,9 @@ function checkitype($mylocholding, $itemtype)
     $GETLISTSQL="SELECT book,av,journal,reference,ebook,ejournal FROM `SENYLRC-SEAL2-Library-Data` where alias = '$mylocholding'  limit 1";
     #echo "zack $GETLISTSQL";
     echo "zack $itemtype";
-    echo  strpos($itemtype, 'journal (electronic)');
+
+    //echo  strpos($itemtype, 'journal');
+    //echo  strcmp($itemtype, 'journal (electronic)');
     $result=mysqli_query($db, $GETLISTSQL);
     $row = $result->fetch_assoc();
     #this line is only for offline testing
@@ -103,6 +105,7 @@ function checkitype($mylocholding, $itemtype)
         #allow all items for the NY State Library at their request
         return 1;
     }
+    echo "zack";
     if ((strpos($itemtype, 'book') !== false)||(strpos($itemtype, 'map') !== false)||(strpos($itemtype, 'other') !== false)) {
         if (($row['book']==1)&&(strpos($itemtype, 'elec') == false)) {
             #Checking if book is allowed
@@ -115,7 +118,7 @@ function checkitype($mylocholding, $itemtype)
             return 1;
         }
     }
-    if ((strpos($itemtype, 'journal') !== false)) {
+    if ((strcmp($itemtype, 'journal') == 0)) {
         if (($row['journal']==1)&&(strpos($itemtype, 'journal') == false)) {
             #Checking if journal is allowed
             return 1;
@@ -133,15 +136,16 @@ function checkitype($mylocholding, $itemtype)
             return 1;
         }
     }
+
     #make sure to do e journals first before other e stuff
-    if ((strpos($itemtype, 'journal (electronic)') !== false)) {
+    if ((strcmp($itemtype, 'journal (electronic)') == 0)) {
         echo "zack here";
         if (($row['ejournal']==1)) {
             #Checking if e journal or journals is allowed
             return 1;
         }
     }
-    if ((strpos($itemtype, 'electronic') !== false)) {
+    if ((strcmp($itemtype, 'electronic') == 0)) {
         if (($row['ebook']==1)) {
             #Checking if e books or journals is allowed
             return 1;
@@ -182,7 +186,7 @@ function checkitypeMHLS($mylocholding, $itemtype)
             return 1;
         }
     }
-    if ((strpos($itemtype, 'journal') !== false)) {
+    if ((strcmp($itemtype, 'journal') == 0)) {
         if (($row['journal']==1)&&(strpos($itemtype, 'journal') == false)) {
             #Checking if journal is allowed
             return 1;
@@ -190,18 +194,18 @@ function checkitypeMHLS($mylocholding, $itemtype)
     }
     if ((strpos($itemtype, 'reference') !== false)) {
         if (($row['reference']==1)&&(strpos($itemtype, 'reference') == false)) {
-            #Checking if reference is allowed
+            #Checking if reference  if ((strcmp($itemtype, 'journal (electronic)') == 0)) { is allowed
             return 1;
         }
     }
     #make sure to do e journals first before other e stuff
-    if ((strpos($itemtype, 'journal (electronic)') !== false)) {
+    if ((strcmp($itemtype, 'journal (electronic)') == 0)) {
         if (($row['ejournal']==1)) {
             #Checking if e journal or journals is allowed
             return 1;
         }
     }
-    if ((strpos($itemtype, 'electronic') !== false)) {
+    if ((strcmp($itemtype, 'electronic') == 0)) {
         if (($row['ebook']==1)) {
             #Checking if e books or journals is allowed
             return 1;
@@ -792,12 +796,15 @@ foreach ($records->location as $location) {
                 $destloc=$sealcheck[0];
                 $destemail=$sealcheck[2];
                 $sealstatus=$sealcheck[1];
+                if (strlen($mylocholding<2)) {
+                    $mylocholding=none;
+                }
                 ################See if library is suspended#####################
                 $suspendstatus=checklib_suspend($libname);
                 ######Check if they will loan that item type
 
                 $itemtypecheck = checkitype($libname, $itemtype);
-
+                echo "Zack the itype is ".$itemtypecheck."<br>";
                 if (($sealstatus==1)&&($itemtypecheck==1)&& (strlen($destemail) > 2)&& ($suspendstatus==0)) {
                     #only process a library if they particate in seal and have a lending email
                     ########Get the Library system for the destination library

@@ -147,7 +147,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $destloc = trim($destloc);
     $reqLOCcode = trim($reqLOCcode);
-
     $illiadchecksql = "SELECT IlliadURL,Illiad,APIkey,LibEmailAlert FROM `SENYLRC-SEAL2-Library-Data` WHERE `loc`='$destloc'";
     $illiadGETLIST = mysqli_query($db, $illiadchecksql);
     $illiadGETLISTCOUNT = '1';
@@ -363,7 +362,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
      $email<br>
      $wphone<br>
     <br>
-    <strong>Note regarding Empire Library Delivery:</strong> Please be aware that not all libraries / library systems have re-started Empire Library Delivery. Be sure to check <a href='https://docs.google.com/spreadsheets/d/1cg7-kNJ0GeJ9ZsJB01GZk_jhS8mUzGWO66gq2vbyVew/edit#gid=2039338721'>this page</a> to see an up-to-date status of <strong>Empire Library Delivery libraries</strong> before sending materials.
+
     <br><br>
      Will you fill this request?  <a href='http://seal.senylrc.org/respond?num=$illnum&a=1' >Yes</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/respond?num=$illnum&a=0' >No</a>
      <br>";

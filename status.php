@@ -36,7 +36,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'GET')&&($recanswer=='1')) {
     $todaydate = date("Y-m-d");
     $sql = "UPDATE `SENYLRC-SEAL2-STATS` SET `receiveTimeStamp` = '$timestamp', `receiveAccount` = '" .$wholename."', `receiveDate` = '$todaydate' WHERE `illNUB` = '$reqnumb'";
     if (mysqli_query($db, $sql)) {
-        echo "ILL ".$reqnumb." has been recieved, <a href='". $_SERVER['HTTP_REFERER']."'>click here to go back to request history</a>";
+        echo "ILL ".$reqnumb." has been received, <a href='". $_SERVER['HTTP_REFERER']."'>click here to go back to request history</a>";
     } else {
         echo "Was not able to recive item, please contact Southeastern of this error";
     }

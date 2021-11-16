@@ -246,7 +246,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
         echo "<TD><a href ='/cancel?num=$illNUB&a=3'>Cancel Request</a></TD></TR> ";
     } elseif (($fill== 1)&&(strlen($receiveaccount)<2)) {
         #Only show the recvied button of the request was filled to start with
-        echo"<td><a href ='/status?num=$illNUB&a=1'>Received Item</a></td></tr> ";
+        echo"<td><a class='confirmation' href ='/status?num=$illNUB&a=1'>Received Item</a></td></tr> ";
     } elseif (($fill== 1)&&(strlen($receiveaccount)>1)&&(strlen($returnaccount)<1)) {
         #Only show renew and return if request was recived but not returned
         echo"<td><a href ='/renew?num=".$illNUB."&a=3'>Request a Renewal</a><br><br><a href ='/status?num=".$illNUB."&a=2'>Return Item</a></td></tr> ";
@@ -272,3 +272,13 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $rowtype = $rowtype + 1;
 }
 echo "</table>";
+?>
+<script type="text/javascript">
+    var elems = document.getElementsByClassName('confirmation');
+    var confirmIt = function (e) {
+        if (!confirm('Are you sure?')) e.preventDefault();
+    };
+    for (var i = 0, l = elems.length; i < l; i++) {
+        elems[i].addEventListener('click', confirmIt, false);
+    }
+</script>

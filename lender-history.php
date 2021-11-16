@@ -267,7 +267,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
         echo"<td><a href ='/renew?num=".$illNUB."&a=1'>Approve Renewal</a><br><br><a href ='/renew?num=".$illNUB."&a=2'>Deny Renewal</a><br> ";
         echo "</td></tr>";
     } elseif (($daysdiff > '14')&&(strlen($checkinAccount)<2)) {
-        echo"<td><a href ='/status?num=$illNUB&a=3'>Check Item Back In</a> ";
+        echo"<td><a  href ='/status?num=$illNUB&a=3'>Check Item Back In</a> ";
         echo "</td></tr>";
     } elseif ((strlen($returnAccount)<2)&&(strlen($renewAccountRequester)<1)&&(strlen($receiveAccount)>1)&&(strlen($checkinAccount)<2)) {
         #Give the option for lender to change due date as long as it has been recived and not returned or renewed
@@ -300,3 +300,13 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $rowtype = $rowtype + 1;
 }
 echo "</table>";
+?>
+<script type="text/javascript">
+    var elems = document.getElementsByClassName('confirmation');
+    var confirmIt = function (e) {
+        if (!confirm('Are you sure?')) e.preventDefault();
+    };
+    for (var i = 0, l = elems.length; i < l; i++) {
+        elems[i].addEventListener('click', confirmIt, false);
+    }
+</script>

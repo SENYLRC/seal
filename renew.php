@@ -185,11 +185,12 @@ if ($renanswer=='1') {
             echo "Renew request for ILL ".$reqnumb." has been sent, <br><a href='/requesthistory'>click here to go back to request history</a>";
 
             #Get the Lending ID for the request
-            $sqlrenew= "SELECT Title,Destination FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."' LIMIT 1 ";
+            $sqlrenew= "SELECT RequesterEMAIL,Title,Destination FROM `SENYLRC-SEAL2-STATS` WHERE `illNUB` = '".$reqnumb."' LIMIT 1 ";
             $result=mysqli_query($db, $sqlrenew);
             $value = mysqli_fetch_object($result);
             $lenderid=$value->Destination;
             $title=$value->Title;
+            $reqemail=$value->RequesterEMAIL;
             ###Get the Destination Name
             $GETLISTSQLDEST="SELECT `Name`, `ILL Email` FROM `SENYLRC-SEAL2-Library-Data` where loc = '$lenderid'  limit 1";
             $resultdest=mysqli_query($db, $GETLISTSQLDEST);
@@ -205,7 +206,7 @@ if ($renanswer=='1') {
             $messagedest = $field_your_institution[0]['value']." has requested a renewal for ILL# ".$reqnumb."<br>Title: ".$title."<br><br>
             <br>
             How do you wish to answer the renewal?  <a href='http://seal.senylrc.org/renew?num=$reqnumb&a=1' >Approved</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/renew?num=$reqnumb&a=2' >Deny</a>
-            <br>";
+            <br><br>  This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$reqemail.".";
             #######Set email subject for renewal
             $subject = "SEAL Renew Request: from ".$field_your_institution[0]['value']." ILL# $reqnumb";
             $subject = html_entity_decode($subject, ENT_QUOTES, 'UTF-8');

@@ -338,7 +338,8 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
      The request was created by:<br>
      $wholename<br>
      $email<br>
-      $wphone<br>";
+      $wphone<br><br>
+      This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$destemail.".";
 
         ######Message for the destination library
         $messagedest = "An ILL request ($illnum) has been created for the following: <br><br>
@@ -362,7 +363,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
      $email<br>
      $wphone<br>
     <br>
-
+This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$email."
     <br><br>
      Will you fill this request?  <a href='http://seal.senylrc.org/respond?num=$illnum&a=1' >Yes</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/respond?num=$illnum&a=0' >No</a>
      <br>";

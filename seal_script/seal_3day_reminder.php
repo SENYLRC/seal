@@ -70,8 +70,8 @@ function getWorkingDays($startDate,$endDate,$holidays){
 }
 
 
-$holidays=array("2021-01-01","2021-01-18","2020-02-17","2020-05-25","2020-09-07","2020-10-12","2020-10-31","2020-11-11","2020-11-26","2020-1
-1-27","2020-12-25","2020-12-28","2020-12-29","2020-12-30","2020-12-31");
+$holidays=array("2022-01-01","2022-01-17","2022-02-12","2022-05-30","2022-06-20","2021-09-07","2021-10-12","2021-10-31","2021-11-11","2021-1
+1-26","2021-11-27","2020-12-27","2021-12-28","2021-12-29","2021-12-30","2021-12-31");
 
 
 
@@ -170,7 +170,9 @@ echo "working days ".$nubworkdays." \n";
 						$fname $lname<br>
 						$email<br>
 						$wphone<br>
-						<br>";
+						<br>
+            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$destemailarray.".";
+
 
 						######Message for the destination library
 						$messagedest = "An ILL request ($illnum)has been created for the following: <br><br>
@@ -193,8 +195,10 @@ echo "working days ".$nubworkdays." \n";
 						$email<br>
 						$wphone<br>
 						<br>
-						Will you fill this request?  <a href='http://seal2.senylrc.org/respond?num=$illnum&a=1' >Yes
-</a> &nbsp&nbsp&nbsp&nbsp                  <a href='http://seal2.senylrc.org/respond?num=$illnum&a=0' >No</a>
+            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$email."
+            <br><br>
+						Will you fill this request?  <a href='http://seal.senylrc.org/respond?num=$illnum&a=1' >Yes
+</a> &nbsp&nbsp&nbsp&nbsp                  <a href='http://seal.senylrc.org/respond?num=$illnum&a=0' >No</a>
 						<br>";
 
 						#######Set email subject for request

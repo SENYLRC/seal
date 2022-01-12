@@ -206,7 +206,9 @@ if ($renanswer=='1') {
             $messagedest = $field_your_institution[0]['value']." has requested a renewal for ILL# ".$reqnumb."<br>Title: ".$title."<br><br>
             <br>
             How do you wish to answer the renewal?  <a href='http://seal.senylrc.org/renew?num=$reqnumb&a=1' >Approved</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/renew?num=$reqnumb&a=2' >Deny</a>
-            <br><br>  This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$reqemail.".";
+            <Br>
+            <hr style='width:200px;text-align:left;margin-left:0'>
+            <br>  This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$reqemail.".";
             #######Set email subject for renewal
             $subject = "SEAL Renew Request: from ".$field_your_institution[0]['value']." ILL# $reqnumb";
             $subject = html_entity_decode($subject, ENT_QUOTES, 'UTF-8');

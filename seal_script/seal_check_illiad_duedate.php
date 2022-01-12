@@ -19,6 +19,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $reqnumb = $row['illNUB'];
     $destlib=$row['Destination'];
     $title = $row['Title'];
+    $origDueDate = $row['DueDate'];
     $requesterEMAIL = $row['requesterEMAIL'];
     //Get data about Destination library from database
     $GETLISTSQLDEST="SELECT `APIkey`, `IlliadURL`, `Name`, `ILL Email` FROM `SENYLRC-SEAL2-Library-Data` where loc like '$destlib'  limit 1";
@@ -54,7 +55,26 @@ while ($row = mysqli_fetch_assoc($retval)) {
     //echo "Cancel Reason ".$reasonCancel."\n";
     //echo "Due Date ".$dueDate."\n";
 
+      //comprare due date
+      if ($origDueDate==$dueDate){
+      echo "no date change \n";
+      }else{
+              //set up email headers
+            $headers = "From: SENYLRC SEAL <sealillsystem@senylrc.org>\r\n" ;
+            $headers .= "MIME-Version: 1.0\r\n";
+            $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+            $to = "spalding@senylrc.org";
+            $message="SEAL Request ".$reqnumbRequest." from ".$destlib." has a new due date which is ".$dueDate."<br>";
+            $message.="This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact
+ the other library in this ILL transaction";
+            $subject = "Request has a new due date  ";
+            #####SEND requester an email to let them know the request will be filled
+            $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
+            $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
+            mail($to, $subject, $message, $headers, "-f ill@senylrc.org");
 
+
+      }
     //IF request was finished, mark that in database
     if (strpos($status, 'Item Shipped') !== false) {
         // echo "item has been finished\n\n";

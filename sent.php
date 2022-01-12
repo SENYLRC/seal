@@ -339,6 +339,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
      $wholename<br>
      $email<br>
       $wphone<br><br>
+          <hr style='width:200px;text-align:left;margin-left:0'><Br>
       This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$destemail.".";
 
         ######Message for the destination library
@@ -362,10 +363,11 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
      $wholename<br>
      $email<br>
      $wphone<br>
-    <br>
-This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$email."
     <br><br>
-     Will you fill this request?  <a href='http://seal.senylrc.org/respond?num=$illnum&a=1' >Yes</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/respond?num=$illnum&a=0' >No</a>
+     Will you fill this request?  <a href='http://seal.senylrc.org/respond?num=$illnum&a=1' >Yes</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/respond?num=$illnum&a=0' >No</a><br>
+      <br> <hr style='width:200px;text-align:left;margin-left:0'>
+      <br>
+     This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$email."
      <br>";
 
         #######Set email subject for request

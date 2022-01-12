@@ -64,8 +64,8 @@ function getWorkingDays($startDate,$endDate,$holidays){
 }
 
 
-$holidays=array("2022-01-01","2022-01-17","2022-02-21","2022-05-30","2022-06-20","2021-09-07","2021-10-12","2021-10-31","2021-11-11","2021-11-26","2021-1
-1-27","2021-12-27","2021-12-28","2021-12-29","2021-12-30","2021-12-31");
+$holidays=array("2022-01-01","2022-01-17","2022-02-21","2022-05-30","2022-06-20","2021-09-07","2021-10-12","2021-10-31","2021-11-11","2021-11-26","2021-11-27","2021-12-27","2021-12-28","2021-12-29","2021
+-12-30","2021-12-31");
 
 
 #####Connect to database
@@ -134,8 +134,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
 					if ( empty($arttile)) $article='';
 echo $illnum;
 						######Copy of message sent to the requester
-						$messagereq = "ILL request ($illnum) has EXPIRED and was not be filled by $destname,  please
- resubmit to a different library: <br><br>
+						$messagereq = "ILL request ($illnum) has EXPIRED and was not be filled by $destname,  please resubmit to a different library: <br><br>
 						Title: $title <br>
 						Author: $author<br>
 						Item Type: $itype<br>
@@ -149,13 +148,13 @@ echo $illnum;
 						$fname $lname<br>
 						$email<br>
 						$wphone<br>
-            <br><Br>
-            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$destemailarray.".";
+            <br><hr style='width:200px;text-align:left;margin-left:0'><Br>
+            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other
+library in this ILL transaction, email ".$destemailarray.".";
 
 
 						######Message for the destination library
-						$messagedest = "ILL request ($illnum) has EXPIRED, the requester has been instructed to resu
-bmit to a different library: <br><br>
+						$messagedest = "ILL request ($illnum) has EXPIRED, the requester has been instructed to resubmit to a different library: <br><br>
 						Title: $title <br>
 						Author: $author<br>
 						Item Type: $itype<br>
@@ -169,8 +168,10 @@ bmit to a different library: <br><br>
 						$fname $lname<br>
 						$email<br>
 						$wphone<br>
-            <br><br>
-            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$email."
+            <br>
+            <hr style='width:200px;text-align:left;margin-left:0'><br>
+            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other
+library in this ILL transaction, email ".$email."
 						<br>";
 
 						#######Set email subject for request
@@ -198,8 +199,7 @@ bmit to a different library: <br><br>
                                                 $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
                                                 mail($email, $subject, $messagereq, $headers, "-f ill@senylrc.org");
 
-						$sqlupdate = "UPDATE `SENYLRC-SEAL2-STATS` SET `Fill` = '4', `emailsent` = '3' , `responderN
-OTE` =  'EXPIRE MSG Sent' WHERE `illNUB` = '$illnum'";
+						$sqlupdate = "UPDATE `SENYLRC-SEAL2-STATS` SET `Fill` = '4', `emailsent` = '3' , `responderNOTE` =  'EXPIRE MSG Sent' WHERE `illNUB` = '$illnum'";
 						mysqli_query($db, $sqlupdate);
 			}
 }

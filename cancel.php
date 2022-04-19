@@ -29,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')  {
         ####Setup the note data to be in email
         $respnote=stripslashes($respnote);
         if (strlen($respnote)>0)  $respnote="The requesting library has noted the following <br> $respnote";
+
 	        $sqlselect="select responderNOTE,requesterEMAIL,Title,Destination from  `seal`.`SENYLRC-SEAL2-STATS` where illNUB='$reqnumb'  LIMIT 1 ";
             $result = mysqli_query($db,$sqlselect);
             $row = mysqli_fetch_array($result) ;
@@ -41,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')  {
                 while ($rowdest = mysqli_fetch_assoc($resultdest)) {
                                 $destlib=$rowdest["Name"];
                                 $destemail=$rowdest["ILL Email"];
+
                         }
           #In case the ILL email for the destination library is more than one, break it down to comma for php mail
           $destemailarray = explode(';', $destemail);
@@ -64,8 +66,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')  {
                 $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
                 $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
                 mail( $destemail_to, $subject, $message, $headers);
-                mail( $to, $subject, $message, $headers);
-
+                mail( $to, $subject, $message, $headers, "-f ill@senylrc.org");
+                mail( $destemail_to, $subject, $message, $headers, "-f ill@senylrc.org");
 
 	        }
        }else{

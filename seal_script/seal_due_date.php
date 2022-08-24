@@ -43,7 +43,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
       $issn<br>
       Call Number: $itemcall <br>
       $article<br><br>
-      <br>"
+      <br>
       <br><hr style='width:200px;text-align:left;margin-left:0'><Br>
       This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern NY Library Resources Council. If you would like to contact the other
 library in this ILL transaction, email.";

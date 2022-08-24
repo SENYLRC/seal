@@ -148,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $destloc = trim($destloc);
     $reqLOCcode = trim($reqLOCcode);
     $illiadchecksql = "SELECT IlliadURL,Illiad,APIkey,LibEmailAlert FROM `SENYLRC-SEAL2-Library-Data` WHERE `loc`='$destloc'";
+    #echo $illiadchecksql."<br>";
     $illiadGETLIST = mysqli_query($db, $illiadchecksql);
     $illiadGETLISTCOUNT = '1';
     $illiadrow = mysqli_fetch_assoc($illiadGETLIST);
@@ -190,6 +191,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             $libreqzip= $pieces[2];
 
             $sqlilliadmp = "SELECT * FROM `SENYLRC-SEAL2-ILLIAD-ADD-MAPPING` WHERE `LOC`='$reqLOCcode' and `illiadID`='$destloc'";
+            #echo $sqlilliadmp."<br>";
             $sqlilliadmpGETLIST = mysqli_query($db, $sqlilliadmp);
             $sqlilliadmpGETLISTCOUNT = '1';
             $sqlilliadmprow = mysqli_fetch_assoc($sqlilliadmpGETLIST);

@@ -93,10 +93,11 @@ mysqli_select_db($db,$dbname);
         $ejournal = $row["ejournal"];
         $journal = $row["journal"];
         $enddate  = $row["SuspendDateEnd"];
-        $timestamp = $row["ModifyDate"];
-        $lastmodemail = $row["ModEmail"];
+        $timestamp = $row["ModifyDate"];   
+        $lastmodemail = $row["ModEmail"]; 
         $libilliad = $row["Illiad"];
-        $libemailalert = $row["LibEmailAlert"];
+        $libilliaddate = $row["IlliadDATE"]; 
+        $libemailalert = $row["LibEmailAlert"]; 
      }
     if ($loc != 'null'){
      ?>
@@ -112,6 +113,7 @@ mysqli_select_db($db,$dbname);
      <B>LOC Location:</b> <?php echo $loc?><br>
      <B>Lib Email Alert: </b> <?php if($libemailalert=='1'){echo "Yes";}else{echo "No";}?><br>
      <B>Lib Illiad API: </b>  <?php if($libilliad=='1'){echo "Yes";}else{echo "No";}?><br>
+     <B>Illiad Due Date Days: </b>  <?php echo $libilliaddate?><br>
    <?php if($system=="DU"){ $system="Dutchess BOCES";}?>
      <?php if($system=="MH"){ $system="Mid-Hudson Library System";}?>
      <?php if($system=="OU"){ $system="Orange Ulster BOCES";}?>

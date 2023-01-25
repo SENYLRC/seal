@@ -47,6 +47,7 @@ $CULINARY="Culinary Institute of America";
 $SSESLCfdr="Franklin D. Roosevelt Library";
 $SSESLC="SENYLRC Special Library Catalog";
 $SSESLCcary="Cary Institute";
+$SSESLCnki="Nathan Kline Institute";
 
 #SUNY Colleges using Ex Libris
 $SUNYR="Rockland Community College";
@@ -78,7 +79,7 @@ function setavailColor($mylocalAvailability)
 {
     if ((strpos($mylocalAvailability, 'CHECKED IN')!==false)||(strpos($mylocalAvailability, 'AVAILABLE')!==false)||(strpos($mylocalAvailability, 'Available')!==false)) {
         $itemcolor='004200';
-    } elseif ((strpos($mylocalAvailability, 'IN LIBRARY USE')!==false)||(strpos($mylocalAvailability, 'DUE')!==false)||(strpos($mylocalAvailability, 'HOLD')!==false)||(strpos($mylocalAvailability, '/')!==false)) {
+    } elseif ((strpos($mylocalAvailability, 'IN LIBRARY USE')!==false)||(strpos($mylocalAvailability, 'DUE')!==false)||(strpos($mylocalAvailability, 'HOLD')!==false)||(strpos($mylocalAvailability, '/')!==false)||(strpos($mylocalAvailability, 'NOT AVAILABLE')!==false)) {
         $itemcolor='800000';
     } else {
         $itemcolor='';
@@ -732,14 +733,14 @@ foreach ($records->location as $location) {
             }
         }
         #########This is for the Koha catalog hosted at SENYLRC
-    } elseif (($locname == $SSESLC) ||  ($locname == $SSESLCfdr)  ||  ($locname == $SSESLCcary)) {
+    } elseif (($locname == $SSESLC) ||  ($locname == $SSESLCfdr)  ||  ($locname == $SSESLCcary)||  ($locname == $SSESLCnki)) {
         #####Pull the checksum for the location
         $seslcchecksum=$location['checksum'];
         #####################redo the curl statement to includes the checksum
         $cmdseslc= "curl -b JSESSIONID=$jession $reqserverurl$windowid\\&id=". urlencode($idc)."\&checksum=$seslcchecksum\&offset=1";
         $outputseslc = shell_exec($cmdseslc);
         ######This echo will show the CURL statment as an HTML comment
-    #echo "<!-- my cmd school is $cmdseslc \n-->";
+    echo "<!-- my cmd school is $cmdseslc \n-->";
     $recordssSESLC= new SimpleXMLElement($outputseslc); // for production
     ######Go through the holding records
     foreach ($recordssSESLC->d952 as $d952) {
@@ -793,6 +794,7 @@ foreach ($records->location as $location) {
                 $mylocalAvailability="Unknow";
                 ##############See if holding is from a SEAL Library and get email
                 $sealcheck=checklib_ill($libname);
+
                 $destloc=$sealcheck[0];
                 $destemail=$sealcheck[2];
                 $sealstatus=$sealcheck[1];
@@ -804,7 +806,6 @@ foreach ($records->location as $location) {
                 ######Check if they will loan that item type
 
                 $itemtypecheck = checkitype($libname, $itemtype);
-                echo "Zack the itype is ".$itemtypecheck."<br>";
                 if (($sealstatus==1)&&($itemtypecheck==1)&& (strlen($destemail) > 2)&& ($suspendstatus==0)) {
                     #only process a library if they particate in seal and have a lending email
                     ########Get the Library system for the destination library
@@ -826,6 +827,8 @@ foreach ($records->location as $location) {
                 $mylocalcallNumber=htmlspecialchars($mylocalcallNumber, ENT_QUOTES);
                 #Set the variable libname to the SUNY Name
                 $libname=$locname;
+                #######Translate the - in the New Paltz catalog to txt
+                $mylocalAvailability=  str_replace("-", "NOT AVAILABLE", $mylocalAvailability);
                 $itemcolor=setavailColor($mylocalAvailability);
                 ##############See if holding is from a SEAL Library and get email
                 $sealcheck=checklib_ill($libname);

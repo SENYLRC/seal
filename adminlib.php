@@ -326,7 +326,7 @@ if ($pageaction ==3) {
                $enddate = date('Y-m-d', strtotime(str_replace('-', '/', $enddate)));
            }
            $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ILL Email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',`system`='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book='$book',journal='$journal',av='$av',ebook='$ebook',ejournal='$ejournal',reference='$reference',ModifyDate='$timestamp',Illiad='$libilliad',IlliadURL='$libilliadurl',IlliadDATE='$libilliaddate',APIkey='$libilliadkey',ModEmail ='Southeastern ADMIN',LibEmailAlert='$libemailalert' WHERE `recnum` = '$librecnumb' ";
-           #echo $sqlupdate;
+           //echo $sqlupdate;
            $result = mysqli_query($db, $sqlupdate);
 
            echo  "Library has been edited<br><br>";
@@ -349,7 +349,7 @@ if ($pageaction ==3) {
            $loc = $row["loc"];
            $lastmodemail = $row["ModEmail"];
            $libilliadurl = $row["IlliadURL"];
-           $libilliaddate = $row["Illiaddate"];
+           $libilliaddate = $row["IlliadDATE"];
            $libsuspend = $row["suspend"];
            $system = $row["system"];
            $address1 = $row["address1"];

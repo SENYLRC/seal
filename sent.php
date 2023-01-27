@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $illiadGETLISTCOUNT = '1';
     $illiadrow = mysqli_fetch_assoc($illiadGETLIST);
     $libilliadurl = $illiadrow["IlliadURL"];
-    $libilliaddate = $illiadrow["IlliadDATE"];
+    $illduedate = $illiadrow["IlliadDATE"];
     $libilliad = $illiadrow["Illiad"];
     $libilliadkey = $illiadrow["APIkey"];
     $libemailalert = $illiadrow["LibEmailAlert"];

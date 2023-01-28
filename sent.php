@@ -199,7 +199,7 @@ VALUES ('0','$ititle','$iauthor','$pubdate','$isbn','$issn','$itype','$itemcall'
             $ititle=addslashes($ititle);
             $iauthor=addslashes($iauthor);
             //Generate the due date, requrired for ILLiad Loans
-            if (ctype_digit($libilliaddate)) {
+            if (ctype_digit($illduedate)) {
                 $date = date("Y-m-d");
                 $illduedateCAL= date('Y-m-d', strtotime($date. ' + '.$illduedate.' days'));
             }

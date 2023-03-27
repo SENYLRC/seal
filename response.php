@@ -105,6 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')  {
             if ($nofillreason=='24'){
               $reasontxt='Poor condition';
             }
+           if ($nofillreason=='25'){
+              $reasontxt='Too New';
+            }
                 $message = "Your ILL request $reqnumb for $title can not be filled by $destlib.<br>".
                 "Reason request can not be filled: $reasontxt".
                 "<br><br>$respnote<br><br> <a href='http://seal.senylrc.org'>Would you like to try a different library</a>?";
@@ -162,6 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')  {
      <option value="22">Non-Circulating</option>
      <option value="23">Not on shelf</option>
      <option value="24">Poor condition</option>
+     <option value="25">Too New</option>
    </select><br><br>
       <textarea name='respondnote' rows="4" cols="50"></textarea><br>
       <input type="submit" value="Submit">

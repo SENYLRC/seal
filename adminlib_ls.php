@@ -1,5 +1,5 @@
 <?php
-// manage-libraries.php###
+// adminlib_ls.php###
 //start session that is used for export feature
 session_id('YOUR_SESSION_ID');
 session_start();
@@ -20,14 +20,12 @@ if ($firstpass == "no") {
         $filter_illemailblank = "";
         $filter_illpart = (isset($_REQUEST['filter_illpart']) ? $filter_illpart = $_REQUEST['filter_illpart'] : "");
         $filter_suspend = (isset($_REQUEST['filter_suspend']) ? $filter_suspend = $_REQUEST['filter_suspend'] : "");
-        $filter_all_libs = (isset($_REQUEST['filter_all_libs']) ? $filter_all_libs = $_REQUEST['filter_all_libs'] : "");
-        $filter_system = (isset($_REQUEST['filter_system']) ? $filter_system = $_REQUEST['filter_system'] : "");
+        $filter_system=$field_home_library_system;
     } else {
         $filter_illemailblank = (isset($_REQUEST['filter_illemailblank']) ? $filter_illemailblank = $_REQUEST['filter_illemailblank'] : "");
         $filter_illpart = (isset($_REQUEST['filter_illpart']) ? $filter_illpart = $_REQUEST['filter_illpart'] : "");
         $filter_suspend = (isset($_REQUEST['filter_suspend']) ? $filter_suspend = $_REQUEST['filter_suspend'] : "");
-        $filter_all_libs = (isset($_REQUEST['filter_all_libs']) ? $filter_all_libs = $_REQUEST['filter_all_libs'] : "");
-        $filter_system = (isset($_REQUEST['filter_system']) ? $filter_system = $_REQUEST['filter_system'] : "");
+        $filter_system=$field_home_library_system;
         $filter_aliasblank = (isset($_REQUEST['filter_aliasblank']) ? $filter_aliasblank = $_REQUEST['filter_aliasblank'] : "");
     }
 } else {
@@ -39,14 +37,11 @@ if ($firstpass == "no") {
     $filter_illemail = "";
     $filter_illemailblank = "";
     $filter_suspend = "";
-    $filter_all_libs = "";
-    $filter_system = "";
     $filter_numresults = "25";
     if (($filter_library != "") || ($filter_loc != "")) {
         $filter_illpart = "";
     } else {
-        //$filter_illpart = "yes";
-        $filter_all_libs = "yes";
+        $filter_illpart = "yes";
     }
 }
 
@@ -92,9 +87,6 @@ if (isset($_REQUEST['$libilliadkey'])) {
 
 if (isset($_REQUEST['libilliadurl'])) {
     $libilliadurl = $_REQUEST['libilliadurl'];
-}
-if (isset($_REQUEST['libilliaddate'])) {
-    $libilliaddate = $_REQUEST['libilliaddate'];
 }
 if (isset($_REQUEST['$libemailalert'])) {
     $libemailalert = $_REQUEST['$libemailalert'];
@@ -168,20 +160,11 @@ if ($pageaction ==3) {
     ?>
    <p>Please select the action you wish to take and the library system to act upon.</p>
    <form action="/status-confirmation" method="post">
+    <?php echo "<input type='hidden' name='system' value= '".$field_home_library_system."'>";?>
    <input type="radio" name="task" value="suspend">Suspend lending<br>
    <input type="radio" name="task" value="activate" checked="checked">Activate lending<br><br>
-   <b>Library System </b><select name="system">
-   <option value = "none">Select a system</option>
-   <option value="DU">Dutchess BOCES</option>
-   <option value="MH">Mid-Hudson Library System</option>
-   <option value="OU">Orange Ulster BOCES</option>
-   <option value="RC">Ramapo Catskill Library System</option>
-   <option value="RB">Rockland BOCES</option>
-   <option value="SE">SENYLRC</option>
-   <option value="SB">Sullivan BOCES</option>
-   <option value="UB">Ulster BOCES</option>
-    </select><br>
-
+   <b>Library System: <?php echo $field_home_library_system?> </b>
+   <br>
       <b>Suspension End Date:</b><input id="datepicker" name="enddate"/><br>
    <br><br>
    <input type="submit" value="Submit">
@@ -224,7 +207,7 @@ if ($pageaction ==3) {
         $result = mysqli_query($db, $insertsql);
         echo  "Library Had Been Added";
         echo "<br><a href='".$_SERVER['REDIRECT_URL']."'>Return to main list</a><br>";
-        echo "<br><a href='/adminlib?action=1'>Add Another Library</a>";
+        echo "<br><a href='/adminlib_ls?action=1'>Add Another Library</a>";
     } else {
         ?>
     <form action="".$_SERVER['REDIRECT_URL']."?<?php echo $_SERVER['QUERY_STRING']; ?>" method="post">
@@ -240,59 +223,13 @@ if ($pageaction ==3) {
     <B>Library ILL participant</b><select name="participant">  <option value="1">Yes</option><option value="0">No</option></select><br>
     <B>Suspend ILL</b><select name="suspend">  <option value="0">No</option><option value="1">Yes</option></select><br>
     <B>Library System</b><select name="system">
-      <option value="DU">Dutchess BOCES</option>
-      <option value="MH">Mid-Hudson Library System</option>
-      <option value="OU">Orange Ulster BOCES</option>
-      <option value="RC">Ramapo Catskill Library System</option>
-      <option value="RB">Rockland BOCES</option>
-      <option value="SE">SENYLRC</option>
-      <option value="SB">Sullivan BOCES</option>
-      <option value="UB">Ulster BOCES</option></select><br><br>
-
-      <br><br>
-<h6>Delivery Option:</h6>
-
-<table>
-        <tr>
-        <td><b>Empire Delivery</b><td>
-          <input type="radio" name="lbEmpire" value="Yes" <?php if ($lbEmpire=="Yes") {
-                echo "checked";
-} ?>> Yes
-          <input type="radio" name="lbEmpire" value="No" <?php if ($lbEmpire=="No") {
-                echo "checked";
-} ?>> No <br>
-        </td></tr>
-        <tr>
-          <td><b>Public Library System Courier  (MHLS or RCLS)</b><td>
-            <input type="radio" name="lbsyscourier" value="Yes" <?php if ($lbsyscourier=="Yes") {
-                echo "checked";
-} ?>> Yes
-            <input type="radio" name="lbsyscourier" value="No" <?php if ($lbsyscourier=="No") {
-                echo "checked";
-} ?>> No <br>
-          </td></tr>
-        <tr>
-          <td><b>US Mail</b><td>
-            <input type="radio" name="lbUSPS" value="Yes" <?php if ($lbUSPS=="Yes") {
-                echo "checked";
-} ?>> Yes
-            <input type="radio" name="lbUSPS" value="No" <?php if ($lbUSPS=="No") {
-                echo "checked";
-} ?>> No <br>
-          </td></tr>
-        <tr>
-          <td><b>Commercial Courier (UPS or FEDEX)</b><td>
-            <input type="radio" name="lbCommCourier" value="Yes" <?php if ($lbCommCourier=="Yes") {
-                echo "checked";
-} ?>> Yes
-            <input type="radio" name="lbCommCourier" value="No" <?php if ($lbCommCourier=="No") {
-                echo "checked";
-} ?>>No <br>
-          </td></tr>
-       
-      </table>
-
-      <h6>Items willing to loan:</h6>
+    <option value = "none">Select a system</option>
+    <option value="CRB">Capital Region BOCES</option>
+    <option value="HFM">Hamilton-Fulton-Montgomery BOCES</option>
+    <option value="Q3S">Questar III SLS</option>
+    <option value="WSWHE">WSWHE BOCES</option>
+     </select><br><br>
+      <B>Items willing to loan in SEAL</b><br>
         <table>
         <tr>
         <td><b>Print
@@ -384,13 +321,7 @@ if ($pageaction ==3) {
         $phone=trim($phone);
         $oclc=trim($oclc);
         $libilliadurl = mysqli_real_escape_string($db, $libilliadurl);
-        $libilliaddate = mysqli_real_escape_string($db, $libilliaddate);
         $loc=trim($loc);
-        $lbsyscourier = $_REQUEST["lbsyscourier"];
-        $lbUSPS = $_REQUEST["lbUSPS"];
-        $lbEmpire  = $_REQUEST["lbEmpire"];
-        $lbCommCourier = $_REQUEST["lbCommCourier"];
-        $lastmodemail = $email;
         $libemail=trim($libemail);
         // If suspenson is set with no end date, a default one of 7 days is calulated
         if (($suspend==1)&&(strlen($enddate)<2)) {
@@ -399,12 +330,7 @@ if ($pageaction ==3) {
         } else {
             $enddate = date('Y-m-d', strtotime(str_replace('-', '/', $enddate)));
         }
-
-        //if participant is being set to 0 also set suspend to 0
-        if ($participant=='0') {
-            $suspend='0';
-        }
-        $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ill_email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',`system`='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book_loan='$book',periodical_loan='$journal',av_loan='$av',ebook_request='$ebook',ejournal_request='$ejournal',theses_loan='$reference',ModifyDate='$timestamp',Illiad='$libilliad',IlliadURL='$libilliadurl',IlliadDATE='$libilliaddate',APIkey='$libilliadkey',ModEmail ='seal ADMIN',LibEmailAlert='$libemailalert' WHERE `recnum` = '$librecnumb' ";
+        $sqlupdate = "UPDATE `$sealLIB` SET Name = '$libname', alias='$libalias', `ill_email` ='$libemail',participant=$participant,suspend=$suspend,SuspendDateEnd='$enddate',`system`='$system',phone='$phone',address1='$address1',address2='$address2',address3='$address3',oclc='$oclc',loc='$loc',book_loan='$book',periodical_loan='$journal',av_loan='$av',ebook_request='$ebook',ejournal_request='$ejournal',theses_loan='$reference',ModifyDate='$timestamp',Illiad='$libilliad',IlliadURL='$libilliadurl',APIkey='$libilliadkey',ModEmail ='$email',LibEmailAlert='$libemailalert' WHERE `recnum` = '$librecnumb' ";
         //for testing
         //echo $sqlupdate;
         $result = mysqli_query($db, $sqlupdate);
@@ -414,7 +340,7 @@ if ($pageaction ==3) {
     } else {
         $GETEDITLISTSQL="SELECT * FROM  `$sealLIB` WHERE `recnum` ='$librecnumb'";
         // for testing
-        // echo $GETEDITLISTSQL;
+        //echo $GETEDITLISTSQL;
         $GETLIST = mysqli_query($db, $GETEDITLISTSQL);
         $GETLISTCOUNT = '1';
         $row = mysqli_fetch_assoc($GETLIST);
@@ -430,7 +356,6 @@ if ($pageaction ==3) {
         $loc = $row["loc"];
         $lastmodemail = $row["ModEmail"];
         $libilliadurl = $row["IlliadURL"];
-        $libilliaddate = $row["IlliadDATE"];
         $libsuspend = $row["suspend"];
         $system = $row["system"];
         $address1 = $row["address1"];
@@ -443,12 +368,8 @@ if ($pageaction ==3) {
         $ejournal = $row["ejournal_request"];
         $journal = $row["periodical_loan"];
         $timestamp = $row["ModifyDate"];
-        $lbsyscourier = $row["lbsyscourier"];
-        $lbUSPS = $row["lbUSPS"];
-        $lbEmpire = $row["lbEmpire"];
-        $lbCommCourier = $row["lbCommCourier"];
         $enddateshow = $row["SuspendDateEnd"]; ?>
-    <form action="/adminlib?<?php echo $_SERVER['QUERY_STRING']; ?>" method="post">
+    <form action="/adminlib_ls?<?php echo $_SERVER['QUERY_STRING']; ?>" method="post">
     <B>Library Name:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="libname" value="<?php echo $libname?>"><br>
     <B>Library Alias:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="libalias" value="<?php echo $libalias?>"><br>
     <B>Library ILL Email:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="libemail" value="<?php echo $libemail?>"><br>
@@ -469,7 +390,6 @@ if ($pageaction ==3) {
           echo "selected=\"selected\"";
                                                                         } ?>>No</option></select><br>
     <B>ILLiad URL:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="libilliadurl" value="<?php echo $libilliadurl?>"><br>
-    <B>ILLiad Due Date Days:</b> <input type="text" SIZE=10 MAXLENGTH=10  name="libilliaddate" value="<?php echo $libilliaddate?>"><br>
     <B>ILLiad API <keygen name="name" challenge="string" keytype="RSA" keyparams="medium">:</b> <input type="text" SIZE=60 MAXLENGTH=255  name="$libilliadkey" value="<?php echo $libilliadkey?>"><br>
     <B>Library ILL participant</b><select name="participant">  <option value="1" <?php if ($libparticipant=="1") {
         echo "selected=\"selected\"";
@@ -488,76 +408,34 @@ if ($pageaction ==3) {
         } else {
             echo "This Library has suspension disabled<br>";
         } ?>
-       <B>Library System</b><select name="system">
+<B>Library System</b><select name="system">
                      <option value="DU" <?php if ($system=="DU") {
-                            echo "selected=\"selected\"";
-} ?>>Dutchess BOCES</option>
+              echo "selected=\"selected\"";
+          } ?>>Dutchess BOCES</option>
                      <option value="MH" <?php if ($system=="MH") {
-                            echo "selected=\"selected\"";
-} ?>>Mid-Hudson Library System</option>
+              echo "selected=\"selected\"";
+          } ?>>Mid-Hudson Library System</option>
                      <option value="OU" <?php if ($system=="OU") {
-                            echo "selected=\"selected\"";
-} ?>>Orange Ulster BOCES</option>
+              echo "selected=\"selected\"";
+          } ?>>Orange Ulster BOCES</option>
                      <option value="RC" <?php if ($system=="RC") {
-                            echo "selected=\"selected\"";
-} ?>>Ramapo Catskill Library System</option>
+              echo "selected=\"selected\"";
+          } ?>>Ramapo Catskill Library System</option>
                     <option value="RB" <?php if ($system=="RB") {
-                        echo "selected=\"selected\"";
-} ?>>Rockland BOCES</option>
+              echo "selected=\"selected\"";
+          } ?>>Rockland BOCES</option>
                     <option value="SE" <?php if ($system=="SE") {
-                        echo "selected=\"selected\"";
-} ?>>SENYLRC</option>
+              echo "selected=\"selected\"";
+          } ?>>SENYLRC</option>
                     <option value="SB" <?php if ($system=="SB") {
-                        echo "selected=\"selected\"";
-} ?>>Sullivan BOCES</option>
+              echo "selected=\"selected\"";
+          } ?>>Sullivan BOCES</option>
                     <option value="UB" <?php if ($system=="UB") {
-                        echo "selected=\"selected\"";
-} ?>>Ulster BOCES</option>
+              echo "selected=\"selected\"";
+          } ?>>Ulster BOCES</option>
     </select><br><br>
-    <br><br>
-<h6>Delivery Option:</h6>
 
-<table>
-        <tr>
-        <td><b>Empire Delivery</b><td>
-          <input type="radio" name="lbEmpire" value="Yes" <?php if ($lbEmpire=="Yes") {
-                echo "checked";
-} ?>> Yes
-          <input type="radio" name="lbEmpire" value="No" <?php if ($lbEmpire=="No") {
-                echo "checked";
-} ?>> No <br>
-        </td></tr>
-        <tr>
-          <td><b>Public Library System Courier  (MHLS or RCLS)</b><td>
-            <input type="radio" name="lbsyscourier" value="Yes" <?php if ($lbsyscourier=="Yes") {
-                echo "checked";
-} ?>> Yes
-            <input type="radio" name="lbsyscourier" value="No" <?php if ($lbsyscourier=="No") {
-                echo "checked";
-} ?>> No <br>
-          </td></tr>
-        <tr>
-          <td><b>US Mail</b><td>
-            <input type="radio" name="lbUSPS" value="Yes" <?php if ($lbUSPS=="Yes") {
-                echo "checked";
-} ?>> Yes
-            <input type="radio" name="lbUSPS" value="No" <?php if ($lbUSPS=="No") {
-                echo "checked";
-} ?>> No <br>
-          </td></tr>
-        <tr>
-          <td><b>Commercial Courier (UPS or FEDEX)</b><td>
-            <input type="radio" name="lbCommCourier" value="Yes" <?php if ($lbCommCourier=="Yes") {
-                echo "checked";
-} ?>> Yes
-            <input type="radio" name="lbCommCourier" value="No" <?php if ($lbCommCourier=="No") {
-                echo "checked";
-} ?>>No <br>
-          </td></tr>
-       
-      </table>
-
-      <h6>Items willing to loan:</h6>
+    <B>Items willing to loan in SEAL</b><br>
       <table>
       <tr>
       <td><b>Print Book</b><td>
@@ -632,7 +510,6 @@ if ($pageaction ==3) {
     // echo "<br>filter_illemailblank: " . $filter_illemailblank;
     // echo "<br>filter_illpart: " . $filter_illpart;
     // echo "<br>filter_suspend: " . $filter_suspend;
-    // echo "<br>filter_all_libs: " . $filter_all_libs;
     // echo "<br>filter_system: " . $filter_system;
     // echo "<br>filter_numresults: " . $filter_numresults;
     // echo "<br></p>";
@@ -651,59 +528,42 @@ if ($pageaction ==3) {
     } else {
         $SQLLIMIT = "";
     }
-
+ 
     $SQLMIDDLE =''; // This builds the display options for the SQL
-    //this filter will over ride suspend and partipant 
-    if ($filter_all_libs == "yes") {
-        //don't set particpant or suspend
-        //but nothing really has to happen
-        $SQLMIDDLE=$SQLMIDDLE = "`participant` < 5 ";
-    }else{
-        $SQLMIDDLE= ($filter_illpart == "yes" ? $SQLMIDDLE = "`participant` = 1 " : $SQLMIDDLE = "`participant` = 0 ");
-        $SQLMIDDLE= ($filter_suspend == "yes" ? $SQLMIDDLE = $SQLMIDDLE . "AND `suspend` = 1 " : $SQLMIDDLE = $SQLMIDDLE . " AND `suspend` = 0 ");
-    }
+    $SQLMIDDLE= ($filter_illpart == "yes" ? $SQLMIDDLE = "`participant` = 1 " : $SQLMIDDLE = "`participant` = 0 ");
     $SQLMIDDLE= ($filter_aliasblank == "yes" ? $SQLMIDDLE = $SQLMIDDLE .  "AND alias = ''  " : $SQLMIDDLE = $SQLMIDDLE . "  ");
     $SQLMIDDLE= ($filter_illemailblank == "yes" ? $SQLMIDDLE = $SQLMIDDLE . "AND `ill_email` = '' " : $SQLMIDDLE = $SQLMIDDLE . "  ");
     $SQLMIDDLE= (strlen($filter_loc) >= 1 ? $SQLMIDDLE = $SQLMIDDLE . "AND `loc` like  '%" . $filter_loc . "%' " : $SQLMIDDLE = $SQLMIDDLE);
     $SQLMIDDLE= (strlen($filter_illemail) >= 1 ? $SQLMIDDLE = $SQLMIDDLE . "AND `ill_email` like  '%" . $filter_illemail . "%' " : $SQLMIDDLE = $SQLMIDDLE);
     $SQLMIDDLE= (strlen($filter_alias) >= 1 ? $SQLMIDDLE = $SQLMIDDLE . "AND `Alias` like  '%" . $filter_alias . "%' " : $SQLMIDDLE = $SQLMIDDLE);
+    $SQLMIDDLE= ($filter_suspend == "yes" ? $SQLMIDDLE = $SQLMIDDLE . "AND `suspend` = 1 " : $SQLMIDDLE = $SQLMIDDLE . " AND `suspend` = 0 ");
     $SQLMIDDLE= (strlen($filter_library) >= 2 ? $SQLMIDDLE = $SQLMIDDLE . "AND `Name` like  '%" . $filter_library . "%' " : $SQLMIDDLE = $SQLMIDDLE);
-    $SQLMIDDLE= (strlen($filter_system) >= 1 ? $SQLMIDDLE = $SQLMIDDLE . "AND `System` like  '%" . $filter_system . "%' " : $SQLMIDDLE = $SQLMIDDLE);
+    $SQLMIDDLE= (strlen($field_home_library_system) >= 1 ? $SQLMIDDLE = $SQLMIDDLE . "AND `System` like  '%" . $field_home_library_system . "%' " : $SQLMIDDLE = $SQLMIDDLE);
+    $SQLMIDDLE= (strlen($field_home_library_system) < 1 ? $SQLMIDDLE = $SQLMIDDLE . "AND (`System` like  '%CRB%' OR `System` like  '%Q3S%' OR `System` like  '%HFM%' OR `System` like  '%WSWHE%' ) " : $SQLMIDDLE = $SQLMIDDLE);
     $GETFULLSQL = $SQLBASE . $SQLMIDDLE . $SQLEND;
     $GETLISTSQL = $SQLBASE . $SQLMIDDLE . $SQLEND . $SQLLIMIT;
+
+
     $GETLIST = mysqli_query($db, $GETLISTSQL);
     $GETCOUNT = mysqli_query($db, $GETFULLSQL);
     $GETLISTCOUNTwhole = mysqli_num_rows($GETCOUNT);
 
     // Foo debugig
-    //echo $GETLISTSQL . "</br>";
-
+    // echo $GETLISTSQL . "</br>";
 
     echo "<form action=".$_SERVER['REDIRECT_URL']." method='post'>";
     echo "<input type='hidden' name='firstpass' value= 'no'>";
-    echo "<p>Display filters:";
+    echo "<h3>Limit Results</h3>";
+    echo"<h4>Display Filters</h4>";
     echo "<input type='checkbox' name='filter_aliasblank' value='yes' " . checked($filter_aliasblank) . ">Missing alias ";
     echo "<input type='checkbox' name='filter_illemailblank' value='yes' " . checked($filter_illemailblank) . ">Missing ILL Email ";
     echo "<input type='checkbox' name='filter_illpart' value='yes' " . checked($filter_illpart) . ">ILL Participant ";
     echo "<input type='checkbox' name='filter_suspend' value='yes' " . checked($filter_suspend) . ">ILL Suspended ";
-    echo "<input type='checkbox' name='filter_all_libs' value='yes' " . checked($filter_all_libs) . ">All Libraries";
-    echo "<br>Library System: <select name='filter_system'>";
-    echo "<option value='' " . selected("", $filter_system) . ">All</option>";
-    echo "<option value = 'DU' " . selected("DU", $filter_system) . ">Dutchess BOCES</option>";
-    echo "<option value = 'MH' " . selected("MH", $filter_system) . ">Mid-Hudson Library System</option>";
-    echo "<option value = 'OU' " . selected("OU", $filter_system) . ">Orange Ulster BOCES</option>";
-    echo "<option value = 'RC' " . selected("RC", $filter_system) . ">Ramapo Catskill Library System</option>";
-    echo "<option value = 'RB' " . selected("RB", $filter_system) . ">Rockland BOCES</option>";
-    echo "<option value = 'SE' " . selected("SE", $filter_system) . ">SENYLRC</option>";
-    echo "<option value = 'SB' " . selected("SB", $filter_system) . ">Sullivan BOCES</option>";
-    echo "<option value = 'UB' " . selected("UB", $filter_system) . ">Ulster BOCES</option>";
-    echo "</select>";
-
-    echo "<br>Search:";
-    echo "<br>Library Name: <input name='library' type='text' value='$filter_library'> ";
-    echo "<br>Library Alias: <input name='filter_alias' type='text' value='$filter_alias'> ";
-    echo "<br>ILL Code: <input name='loc' type='text' value='$filter_loc'> ";
-    echo "<br>ILL Email: <input name='filter_illemail' type='text' value='$filter_illemail'> ";
+    echo "<br><b>OR</b><h4>Search by:</h4>";
+    echo "<b>Library Name: </b><input name='library' type='text' value='$filter_library'> ";
+    echo "<br><b>Library Alias: </b><input name='filter_alias' type='text' value='$filter_alias'> ";
+    echo "<br><b>ILL Code: </b><input name='loc' type='text' value='$filter_loc'> ";
+    echo "<br><b>ILL Email: </b><input name='filter_illemail' type='text' value='$filter_illemail'> ";
     echo "<br><select name='filter_numresults'></br>";
     echo "<option " . selected("25", $filter_numresults) . " value = '25'>25</option>";
     echo "<option " . selected("50", $filter_numresults) . " value = '50'>50</option>";
@@ -725,13 +585,13 @@ if ($pageaction ==3) {
     }
     echo "<br>Total Results: ".$GETLISTCOUNTwhole."<br>";
     ;
-    echo "<br><a href='adminlib'>Clear</a> <input type=Submit value=Update><br>";
+    echo "<br><button><a href='adminlib'>Clear</a></button> <b>OR</b><input type=Submit value=Update><br>";
     echo "</form>";
-    echo "<a href='".$_SERVER['REDIRECT_URL']."?action=1'>Would you like to add a library?</a><br>";
-    echo "<a href='".$_SERVER['REDIRECT_URL']."?action=5'>Mass suspend or activate library lending (hint: for updating system)</a><br>";
-    echo "<a target='_blank' href=/export>Export to CSV</a><br>";
+    echo "<hr><ul><li><a href='".$_SERVER['REDIRECT_URL']."?action=1'>Would you like to add a library?</a></li>";
+    echo "<li><a href='".$_SERVER['REDIRECT_URL']."?action=5'>Mass suspend or activate library lending (hint: for updating system)</a></li>";
+    echo "<li><a target='_blank' href=/export_ls>Export to CSV</a></li></ul>";
+
     echo "<table><tr><th>Library</th><th>Alias</th><th>Participant</th><th>Suspend</th><th>System</th><th>OCLC</th><th>LOC</th><th>Action</th></tr>";
-  
     while ($row = mysqli_fetch_assoc($GETLIST)) {
         $librecnumb = $row["recnum"];
         $libname = $row["Name"];
@@ -755,9 +615,9 @@ if ($pageaction ==3) {
         }
         echo " <Tr><Td>$libname</td><td>$libalias</td><td>$libparticipant</td><td>$libsuspend</td><td>$system</td><td>$oclc</td><td>$loc</td> ";
         echo "<td><a href='".$_SERVER['REDIRECT_URL']."?action=2&librecnumb=$librecnumb'>Edit</a>  <a href='".$_SERVER['REDIRECT_URL']."?action=3&librecnumb=$librecnumb''>Delete</a> </td></tr>";
-    }//end while looping through sql results
-    //store array of all results  in session for export function
-    $_SESSION['query2'] = $GETFULLSQL;
+    }
+     //store array of all results  in session for export function
+     $_SESSION['query2'] = $GETFULLSQL;
     echo "</table>";
 }
 ?>

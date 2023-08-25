@@ -9,9 +9,12 @@
   });
 </script>
 <?php
-// allrequests.php###
+// allrequests_ls.php###
 require '/var/www/seal_script/seal_function.php';
 
+
+//set the system to the one they belong to
+$filter_system=$field_home_library_system;
 
 $firstpass = (isset($_REQUEST['firstpass']) ? "no" : "yes");
 $filter_illnum = (isset($_REQUEST['filter_illnum']) ? $filter_illnum = $_REQUEST['filter_illnum'] : "");
@@ -19,9 +22,7 @@ $filter_illnum = (isset($_REQUEST['filter_illnum']) ? $filter_illnum = $_REQUEST
 if ($firstpass == "no") {
     // Setting options to user's chosen
     if ($filter_illnum != "") { // If looking for ILL num then set the other options
-        
-        $filter_startdate = date("m/d/Y");
-        echo "<br>my state date is".$filter_startdate."<br>";
+        $filter_startdate = "01/01/2023";
         $filter_enddate = date("m/d/Y");
         $filter_lender = "";
         $filter_borrower = "";
@@ -36,7 +37,6 @@ if ($firstpass == "no") {
         $filter_return="yes";
         $filter_checkin="yes";
         $filter_destination = "";
-        $filter_system = "";
         $filter_offset = 0;
     } else {
         if (isset($_REQUEST['filter_yes'])) {
@@ -62,10 +62,6 @@ if ($firstpass == "no") {
         }
         if (isset($_REQUEST['filter_checkin'])) {
             $filter_checkin = $_REQUEST['filter_checkin'];
-        }
-
-        if (isset($_REQUEST['filter_system'])) {
-            $filter_system = $_REQUEST['filter_system'];
         }
         if (isset($_REQUEST['filter_lender'])) {
             $filter_lender = $_REQUEST['filter_lender'];
@@ -93,7 +89,7 @@ if ($firstpass == "no") {
     // Setting options to default values
     $firstpass = "no";
     $filter_illnum = "";
-    $filter_startdate = "08/01/2022";
+    $filter_startdate = "01/01/2023";
     $filter_enddate = date("m/d/Y");
     $filter_lender = "";
     $filter_borrower = "";
@@ -108,7 +104,6 @@ if ($firstpass == "no") {
     $filter_recevied="yes";
     $filter_return="yes";
     $filter_checkin="yes";
-    $filter_system = "";
     $filter_offset = 0;
 }
 
@@ -130,8 +125,8 @@ if (strlen($filter_illnum) > 2) {
 if (strlen($filter_lender) > 2) {
     $SQL_Search="SELECT `loc` FROM `$sealLIB` where `Name` like '%$filter_lender%'";
     $Possibles=mysqli_query($db, $SQL_Search);
-    // Return the number of rows in result set
-    $rowcount=mysqli_num_rows($Possibles);
+        // Return the number of rows in result set
+        $rowcount=mysqli_num_rows($Possibles);
     if ($rowcount >0) {
         while ($rowposs = mysqli_fetch_assoc($Possibles)) {
             $possloc=$rowposs["loc"];
@@ -148,8 +143,8 @@ if (strlen($filter_lender) > 2) {
 if (strlen($filter_borrower) > 2) {
     $SQL_Search="SELECT `loc` FROM `$sealLIB` where `Name` like '%$filter_borrower%'";
     $Possibles=mysqli_query($db, $SQL_Search);
-        // Return the number of rows in result set
-        $rowcount=mysqli_num_rows($Possibles);
+    // Return the number of rows in result set
+    $rowcount=mysqli_num_rows($Possibles);
     if ($rowcount >0) {
         while ($rowposs = mysqli_fetch_assoc($Possibles)) {
             $possloc=$rowposs["loc"];
@@ -172,10 +167,7 @@ $sql_startdate = convertDate($filter_startdate);
 $sql_enddate = convertDate($filter_enddate);
 $SQLDATES = "`Timestamp` >= '" . $sql_startdate . " 00:00:00' AND `Timestamp` <= '" . $sql_enddate . " 23:59:59' ";
 
-// Adding the system
-if ($filter_system != "") {
-    $SQLSYSTEM = " AND (`ReqSystem` = '" . $filter_system . "' OR `DestSystem` = '" . $filter_system . "')";
-}
+
 
 $SQLMIDDLE =''; // This builds the display options for the SQL
 if ($filter_yes == "yes") {
@@ -235,11 +227,14 @@ if ($filter_numresults != "all") {
     $SQLLIMIT = "";
 }
 
+
+//set the system to the one they belong to
+$SQLSYSTEM =" AND (`ReqSystem` = '" . $field_home_library_system . "' OR `DestSystem` = '" . $field_home_library_system . "')";
+
 $GETFULLSQL = $SQLBASE . $SQLDATES . $SQLTITLE . $SQL_LENDER . $SQL_BORROWER . $SQLILL . $SQLSYSTEM . " AND (" . $SQLMIDDLE . ")" . $SQLEND;
 $GETLISTSQL = $SQLBASE . $SQLDATES . $SQLTITLE . $SQL_LENDER . $SQL_BORROWER . $SQLILL . $SQLSYSTEM . " AND (" . $SQLMIDDLE . ")" . $SQLEND . $SQLLIMIT;
 //for testing
-echo $GETLISTSQL . "</br>";
-
+//echo $GETLISTSQL . "</br>";
 $GETLIST = mysqli_query($db, $GETLISTSQL);
 $GETCOUNT = mysqli_query($db, $GETFULLSQL);
 $GETLISTCOUNTwhole = mysqli_num_rows($GETCOUNT);
@@ -281,17 +276,8 @@ echo "<input type='checkbox' name='filter_checkin' value='yes' " . checked($filt
 echo "<br>";
 echo "Start Date <input id='startdate' name='filter_startdate' value='$filter_startdate'> ";
 echo "End Date <input id='enddate' name='filter_enddate' value='$filter_enddate'></br>";
-echo "Library System <select name='filter_system'></br>";
-echo "<option " . selected('', $filter_system) . " value=''>All</option>";
-echo "<option " . selected('MH', $filter_system) . " value = 'MH'>Mid Hudson Library System</option>";
-echo "<option " . selected('RC', $filter_system) . " value = 'RC'>Ramapo Catskill Library System</option>";
-echo "<option " . selected('DU', $filter_system) . " value = 'DU'>Dutchess BOCES</option>";
-echo "<option " . selected('OU', $filter_system) . " value = 'OU'>Orange Ulster BOCES</option>";
-echo "<option " . selected('RB', $filter_system) . " value = 'RB'>Rockland BOCES</option>";
-echo "<option " . selected('SB', $filter_system) . "value = 'SB'>Sullivan BOCES</option>";
-echo "<option " . selected('UB', $filter_system) . " value = 'UB'>Ulster BOCES</option>";
-echo "<option " . selected('SE', $filter_system) . " value = 'SE'>Southeastern Group</option>";
-echo "</select></br>";
+
+
 echo "Lender <input name='filter_lender' type='text' value='$filter_lender'> ";
 echo "Borrower <input name='filter_borrower' type='text' value='$filter_borrower'></br>";
 echo "Title <input name='filter_title' type='text' value='$filter_title'> </br>";
@@ -302,10 +288,7 @@ echo "<option " . selected("50", $filter_numresults) . " value = '50'>50</option
 echo "<option " . selected("100", $filter_numresults) . " value = '100'>100</option>";
 echo "<option " . selected("all", $filter_numresults) . " value = 'all'>All</option>";
 echo "</select> results per page. ";
-
-
 $resultpages = ceil($GETLISTCOUNTwhole / $filter_numresults);
-
 $display_page = $filter_offset + 1;
 if ($filter_numresults != "all") {
     echo "Currently on page <select name='filter_offset'>";
@@ -344,6 +327,7 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $returnmethod=$row['returnMethod'];
     $returndate=$row['returnDate'];
     $fillNoFillDate=$row['fillNofillDate'];
+
     $receivedate=$row['receiveDate'];
     $checkinAccount=$row['checkinAccount'];
     $checkindate=$row['checkinTimeStamp'];

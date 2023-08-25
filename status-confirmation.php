@@ -13,7 +13,7 @@ if (isset($_REQUEST['enddate'])) {
     $enddate = $_REQUEST['enddate'];
 }
 
-#If suspenson is set with no end date, a default one of 7 days is calulated
+// If suspenson is set with no end date, a default one of 7 days is calulated
 if (($suspend==1)&&(strlen($enddate)<2)) {
     $enddate = strtotime("+7 day");
     $enddate = date('Y-m-d', $enddate);
@@ -57,6 +57,7 @@ if ($action == "go") {
     if ($system == "UB") {
         $displaysystem="Ulster BOCES";
     }
+
     echo "You have chosen to <b>$task lending</b> for all libraries of the <b>$displaysystem</b>.<br><br>";
     echo "This will overwrite the setting for these libraries. Are you sure you wish to proceed? "; ?><form action="/status-confirmation" method="post">
   <input type="hidden" name="task" value="<?php echo $task; ?>">
@@ -65,25 +66,28 @@ if ($action == "go") {
   <input type="submit" name="proceed" value="Proceed"> <a href='/adminlib'>Cancel</a></form><?php
 } elseif ($action == "doit") {
         echo "<b>The libraries have been updated!<b>";
-        #Connect to database
-        require '../seal_script/seal_db.inc';
+        // Connect to database
+        include '/var/www/seal_script/seal_db.inc';
+        include '/var/www/seal_script/seal_function.php';
+        $timestamp = date("Y-m-d H:i:s");
+
         $db = mysqli_connect($dbhost, $dbuser, $dbpass);
         mysqli_select_db($db, $dbname);
 
 
-        if ($task == "suspend") {
-            #Suspend
-            $sqlupdate = "UPDATE `$sealLIB` SET suspend='1', SuspendDateEnd='$enddate' WHERE `participant` = '1' and `suspend` = '0' and `system` = '$system' ";
-        } else {
-            #Activate
-            $sqlupdate = "UPDATE `$sealLIB` SET suspend='0' WHERE `participant` = '1' and `suspend` = '1' and `system` = '$system' ";
-        }
-        echo $sqlupdate;
+    if ($task == "suspend") {
+        // Suspend
+        $sqlupdate = "UPDATE `$sealLIB` SET suspend='1', SuspendDateEnd='$enddate',ModifyDate='$timestamp',ModEmail ='$email' WHERE loc <> '' and `participant` = '1' and `suspend` = '0' and `system` = '$system' ";
+    } else {
+        // Activate
+        $sqlupdate = "UPDATE `$sealLIB` SET suspend='0',ModifyDate='$timestamp',ModEmail ='$email' WHERE loc <> '' and `participant` = '1' and `suspend` = '1' and `system` = '$system' ";
+    }
+        //echo $sqlupdate;
         $result = mysqli_query($db, $sqlupdate);
 
-        #Close the database
+        // Close the database
         mysqli_close($db);
-    } else {
-        echo "Sorry! We cannot complete your action.  <a href='/adminlib'>Please go back</a> and select a library system.";
-    }
+} else {
+    echo "Sorry! We cannot complete your action.  ";
+}
 ?>

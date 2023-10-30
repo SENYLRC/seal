@@ -238,7 +238,7 @@ if ($filter_numresults != "all") {
 $GETFULLSQL = $SQLBASE . $SQLDATES . $SQLTITLE . $SQL_LENDER . $SQL_BORROWER . $SQLILL . $SQLSYSTEM . " AND (" . $SQLMIDDLE . ")" . $SQLEND;
 $GETLISTSQL = $SQLBASE . $SQLDATES . $SQLTITLE . $SQL_LENDER . $SQL_BORROWER . $SQLILL . $SQLSYSTEM . " AND (" . $SQLMIDDLE . ")" . $SQLEND . $SQLLIMIT;
 //for testing
-echo $GETLISTSQL . "</br>";
+//echo $GETLISTSQL . "</br>";
 
 $GETLIST = mysqli_query($db, $GETLISTSQL);
 $GETCOUNT = mysqli_query($db, $GETFULLSQL);

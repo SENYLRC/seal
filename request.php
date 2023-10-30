@@ -63,6 +63,7 @@ echo "<input type='hidden' name='reqLOCcode' value= ' ".$field_loc_location_code
 echo "<h3>Request Details</h3>";
 echo "<b>Need by date</b> <input type='text' size='100' name='needbydate'><br><br>";
 echo "<b>Note</b> <input type='text' size='100' name='reqnote'><br><br>";
+echo "**Patron information is optional; please follow your local policies regarding patron privacy when making a request.<br>";
 echo "<b>Patron Name or Barcode</b> <input SIZE=100 MAXLENGTH=255 type='text' size='100' name='patronnote'><br><br>";
 echo "<b>Is this a request for an article?</b>  ";
 echo "Yes <input type='radio' onclick='javascript:yesnoCheck();' name='yesno' id='yesCheck'>";
@@ -156,11 +157,14 @@ foreach ($records->location as $location) { // Locations loop start
         if (($catalogtype == "OPALS") || ($catalogtype == "Polaris")) {
             $itemlocation=  $holding->localLocation;
         }
-        if ($catalogtype == "InnovativeMHLS") {
-
-
+        if ($catalogtype == "TLC") {
             $itemlocation=$holding->localLocation; // Gets the alias
-            
+        }
+        if ($catalogtype == "SymphonyRCLS") {
+            $itemlocation=$holding->localLocation; // Gets the alias
+        }
+        if ($catalogtype == "InnovativeMHLS") {
+            $itemlocation=$holding->localLocation; // Gets the alias
         }
         $locationinfo=find_locationinfo($itemlocation, $location['name']);
         $itemlocation=htmlspecialchars($itemlocation, ENT_QUOTES); // Sanitizes locations with special characters in them
@@ -172,6 +176,28 @@ foreach ($records->location as $location) { // Locations loop start
         $destlibsystem=$locationinfo[4]; // Destination library system
         $destlibname=$locationinfo[5]; // Destination library name
         $destAlias=$locationinfo[6]; // Destination Alias
+         // translate system code to text name
+         if (strcmp($destlibsystem, 'MH')==0) {
+            $destlibsystemtxt = "Mid Hudson Library System";
+        }else if (strcmp($destlibsystem, 'RC')==0) {
+            $destlibsystemtxt = "Ramapo Catskill Library System";
+        }else if (strcmp($destlibsystem, 'SE')==0) {
+            $destlibsystemtxt = "SENYLRC";
+        }else if (strcmp($destlibsystem, 'DU')==0) {
+            $destlibsystemtxt = "Dutchess BOCES";
+        }else if (strcmp($destlibsystem, 'OU')==0) {
+            $destlibsystemtxt = "Orange Ulster BOCES";
+        }else if (strcmp($destlibsystem, 'RB')==0) {
+            $destlibsystemtxt = "Rockland BOCES";
+        }else if (strcmp($destlibsystem, 'SB')==0) {
+            $destlibsystemtxt = "Sullivan BOCES";
+        }else if (strcmp($destlibsystem, 'UB')==0) {
+            $destlibsystemtxt = "Ulster BOCES";
+        }else if (strlen($destlibsystem) <1) {
+            $destlibsystemtxt = "All";
+        }else{
+            $destlibsystemtxt = "SENYLRC Group";
+        }
         $destlibname=htmlspecialchars($destlibname, ENT_QUOTES); // Sanitizes library names with special characters in them
         //only check item type if they are active in the ILL program
         if ($destpart==1) {
@@ -231,13 +257,13 @@ foreach ($records->location as $location) { // Locations loop start
             $itemcallnum= preg_replace('/[:]/', ' ', $itemcallnum);
             $itemlocation= preg_replace('/[:]/', ' ', $itemlocation);
             $itemlocallocation= preg_replace('/[:]/', ' ', $itemlocallocation);
-            echo"<div class='multiplereq'><input type='checkbox' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystem."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
-            echo"<div class='singlereq'><input type='radio' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystem."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
+            echo"<div class='multiplereq'><input type='checkbox' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystemtxt."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
+            echo"<div class='singlereq'><input type='radio' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystemtxt."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
             $loccount=$loccount+1;
         } elseif ($destfail == 1) {
             //only showing error code 2
         } else {
-            $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystem), $failmessage</div>";
+            $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystemtxt), $failmessage</div>";
             echo "<!-- Holding location failed checks. --> \n";
         }
     } // Generic holding loop end
@@ -269,6 +295,28 @@ foreach ($records->location as $location) { // Locations loop start
             $destlibname=htmlspecialchars($destlibname, ENT_QUOTES); // Sanitizes library names with special characters in them
             $desttypeloan=check_itemtype($destill, $itemtype); // 0=No, 1=Yes
 
+             // translate system code to text name
+             if (strcmp($destlibsystem, 'MH')==0) {
+                $destlibsystemtxt = "Mid Hudson Library System";
+            }else if (strcmp($destlibsystem, 'RC')==0) {
+                $destlibsystemtxt = "Ramapo Catskill Library System";
+            }else if (strcmp($destlibsystem, 'SE')==0) {
+                $destlibsystemtxt = "SENYLRC";
+            }else if (strcmp($destlibsystem, 'DU')==0) {
+                $destlibsystemtxt = "Dutchess BOCES";
+            }else if (strcmp($destlibsystem, 'OU')==0) {
+                $destlibsystemtxt = "Orange Ulster BOCES";
+            }else if (strcmp($destlibsystem, 'RB')==0) {
+                $destlibsystemtxt = "Rockland BOCES";
+            }else if (strcmp($destlibsystem, 'SB')==0) {
+                $destlibsystemtxt = "Sullivan BOCES";
+            }else if (strcmp($destlibsystem, 'UB')==0) {
+                $destlibsystemtxt = "Ulster BOCES";
+            }else if (strlen($destlibsystem) <1) {
+                $destlibsystemtxt = "All";
+            }else{
+                $destlibsystemtxt = "SENYLRC Group";
+            }
             echo "<!-- \n";
             echo "catalogtype: $catalogtype \n";
             echo "itemavail: $itemavail (1) \n";
@@ -319,15 +367,15 @@ foreach ($records->location as $location) { // Locations loop start
                 $itemcallnum= preg_replace('/[:]/', ' ', $itemcallnum);
                 $itemlocation= preg_replace('/[:]/', ' ', $itemlocation);
                 $itemlocallocation= preg_replace('/[:]/', ' ', $itemlocallocation);
-                echo"<div class='multiplereq'><input type='checkbox' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystem."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
-                echo"<div class='singlereq'><input type='radio' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystem."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
+                echo"<div class='multiplereq'><input type='checkbox' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystemtxt."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
+                echo"<div class='singlereq'><input type='radio' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystemtxt."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
                 $loccount=$loccount+1;
             } elseif ($destfail == 1) {
                 //not showing fail code 1 to end user
-                $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystem), $failmessage</div>";
+                $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystemtxt), $failmessage</div>";
             } else {
                 //will show other error to inform end user
-                $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystem), $failmessage</div>";
+                $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystemtxt), $failmessage</div>";
                 echo "<!-- Holding location failed checks. --> \n";
             }
         }//end foreach loop for albany law school 994
@@ -365,6 +413,28 @@ foreach ($records->location as $location) { // Locations loop start
             $destlibname=htmlspecialchars($destlibname, ENT_QUOTES); // Sanitizes library names with special characters in them
             $desttypeloan=check_itemtype($destill, $itemtype); // 0=No, 1=Yes
             $itemlocallocation=$itemlocation; // Needed in sent.php
+             // translate system code to text name
+             if (strcmp($destlibsystem, 'MH')==0) {
+                $destlibsystemtxt = "Mid Hudson Library System";
+            }else if (strcmp($destlibsystem, 'RC')==0) {
+                $destlibsystemtxt = "Ramapo Catskill Library System";
+            }else if (strcmp($destlibsystem, 'SE')==0) {
+                $destlibsystemtxt = "SENYLRC";
+            }else if (strcmp($destlibsystem, 'DU')==0) {
+                $destlibsystemtxt = "Dutchess BOCES";
+            }else if (strcmp($destlibsystem, 'OU')==0) {
+                $destlibsystemtxt = "Orange Ulster BOCES";
+            }else if (strcmp($destlibsystem, 'RB')==0) {
+                $destlibsystemtxt = "Rockland BOCES";
+            }else if (strcmp($destlibsystem, 'SB')==0) {
+                $destlibsystemtxt = "Sullivan BOCES";
+            }else if (strcmp($destlibsystem, 'UB')==0) {
+                $destlibsystemtxt = "Ulster BOCES";
+            }else if (strlen($destlibsystem) <1) {
+                $destlibsystemtxt = "All";
+            }else{
+                $destlibsystemtxt = "SENYLRC Group";
+            }
             echo "<!-- \n";
             echo "catalogtype: $catalogtype \n";
             echo "itemavail: $itemavail (1) \n";
@@ -418,15 +488,15 @@ foreach ($records->location as $location) { // Locations loop start
                 $itemcallnum= preg_replace('/[:]/', ' ', $itemcallnum);
                 $itemlocation= preg_replace('/[:]/', ' ', $itemlocation);
                 $itemlocallocation= preg_replace('/[:]/', ' ', $itemlocallocation);
-                echo"<div class='multiplereq'><input type='checkbox' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystem."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
-                echo"<div class='singlereq'><input type='radio' class='librarycheck[]' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystem."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
+                echo"<div class='multiplereq'><input type='checkbox' class='librarycheck' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystemtxt."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
+                echo"<div class='singlereq'><input type='radio' class='librarycheck[]' name='libdestination[]' value='". $itemlocation .":".$destlibname.":".$destlibsystem.":".$itemavailtext.":".$itemcallnum.":".$itemlocallocation.":".$destemail.":".$destill."'><strong>".$destlibname."</strong> (".$destlibsystemtxt."), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
                 $loccount=$loccount+1;
             } elseif ($destfail == 1) {
                 //not showing fail code 1 to end user
-                $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystem), $failmessage</div>";
+                $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystemtxt), $failmessage</div>";
             } else {
                 //will show other error to inform end user
-                $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystem), $failmessage</div>";
+                $deadlibraries[] = "<div class='grayout'>$destlibname ($destlibsystemtxt), $failmessage</div>";
                 echo "<!-- Holding location failed checks. --> \n";
             }
         }//end foreach $recordssSESLC

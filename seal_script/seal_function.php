@@ -90,9 +90,6 @@ function shipmtotxt($shipmethod)
     if ($shipmethod=="fedex") {
         $shiptxt='FedEx';
     }
-    if ($shipmethod=="crb") {
-        $shiptxt='Capital Region BOCES Courier';
-    }
     if ($shipmethod=='OCLC Article Exchange') {
         $shiptxt='OCLC Article Exchange';
     }
@@ -176,7 +173,7 @@ function returnLimits($Offset, $filter_numresults)
     }
     $endint = $startint + $filter_numresults;
 }
-// start of linx Functions
+// start of  Functions
 function normalize_availability($itemavail)
 {
     $itemavail = str_replace(" ", "", $itemavail);
@@ -192,6 +189,9 @@ function normalize_availability($itemavail)
         return 1;
             break;
     case "CheckedIn":
+        return 1;
+            break;
+    case "CHECKEDIN":
         return 1;
             break;
     default:
@@ -226,94 +226,75 @@ function set_koha_availability($itemavail)
 function find_catalog($location)
 {
     switch ($location) {
-    case "CDLC Partial Union Catalog (PUC)":
+    case "SENYLRC Special Library Catalog":
         return "Koha";
             break;
-    case "HFM BOCES":
-        return "Alexandria";
+   case "Adelphi University - Hudson Valley Center";
+        return "Alma";
             break;
-    case "Albany College of Pharmacy and Health Sciences":
-        return "Worldcat";
+    case "Astor Services For Children & Families":
+        return "Koha";
             break;
-    case "NYS Dept. of Environmental Conservation";
+    case "Cary Institute":
+        return "Koha";
+            break;
+    case "Columbia-Greene Community College":
+        return "Alma";
+            break;
+    case "Dominican College":
+        return "Alma";
+            break;
+    case "Dutchess BOCES School Library System":
         return "OPALS";
             break;
-   case "NYS Dept. of Transportation";
-        return "OPALS";
-            break;
-    case "Maria College":
-        return "OPALS";
-            break;
-    case "New York State Department of Health":
-        return "OPALS";
-            break;
-    case "Siena College":
+    case "Dutchess Community College":
         return "Alma";
             break;
-    case "Albany Law School":
-        return "Symphony";
+    case "Mid-Hudson Library System":
+        return "InnovativeMHLS";
             break;
-    case "Hudson Valley Community College":
-        return "Alma";
+    case "Mount St. Mary College":
+        return "Innovative";
             break;
-    case "University at Albany":
-        return "Alma";
+    case "St. Thomas Aquinas College":
+       return "Innovative";
             break;
-    case "Fulton Montgomery Community College":
-        return "Alma";
-            break;
-    case "Rudolf Steiner Library":
-        return "OPALS";
-            break;
-    case "Union College":
-        return "Alma";
-            break;
-    case "SUNY Adirondack":
-        return "Alma";
-            break;
-    case "SUNY Cobleskill":
-        return "Alma";
-            break;
-    case "Schenectady County Community College":
-        return "Alma";
-            break;
-    case "Russell Sage College":
-        return "Alma";
-            break;
-    case "Skidmore College":
-        return "Folio";
-            break;
-    case "College of Saint Rose":
-        return "Voyager";
-            break;
-    case "Rensselaer Polytechnic Institute":
-        return "Worldcat";
-            break;
-    case "MVLS and SALS combined catalog":
-        return "Polaris";
-            break;
-    case "Upper Hudson Library System":
-        return "InnovativeUHLS";
-            break;
-    case "WSWHE BOCES School Library System":
-        return "OPALS";
-            break;
-    case "Scotia Glenville School District":
-        return "OPALS";
-            break;
-    case "Questar School Library System":
-        return "OPALS";
-            break;
-    case "Capital Region BOCES":
-        return "SirsiDynix";
-            break;
-    case "Emma Willard":
-        return "SirsiDynix";
+    case "Nathan Kline Institute":
+        return "Koha";
             break;
     case "New York State Library":
         return "SirsiDynix";
             break;
-
+    case "Orange County Community College":
+        return "Alma";
+            break;
+    case "Orange-Ulster School Library System":
+        return "OPALS";
+            break;
+    case "Ramapo-Catskill Library System":
+        return "SymphonyRCLS";
+            break;
+    case "Rockland Community College":
+        return "Alma";
+            break;
+    case "Rockland School Library System":
+        return "OPALS";
+            break;
+    case "SUNY New Paltz ":
+        return "Alma";
+            break;
+    case "Sullivan County Community College":
+        return "Alma";
+            break;
+    case "Sullivan School Library System":
+        return "TLC";
+            break;
+    case "Ulster County Community College":
+        return "Alma";
+            break;
+    case "Vassar College":
+        return "Alma";
+            break;
     }
 }
 function find_locationinfo($locationalias, $locationname)
@@ -326,18 +307,23 @@ function find_locationinfo($locationalias, $locationname)
     $db = mysqli_connect($dbhost, $dbuser, $dbpass);
     mysqli_select_db($db, $dbname);
     if ($locationname == "MVLS and SALS combined catalog") {
-        $a2= explode(":", $locationalias);
-        $locationalias=strtok($a2[0], ' ');
+ 	$parts = explode(":", $locationalias, 2);
+        if (count($parts) === 2) {
+        $locationalias = trim($parts[0]);
+        $category = trim($parts[1]);
+        //for testing
+        //echo "my location alias is ".$locationalias."<br>";
         $GETLISTSQL="SELECT `loc`,`participant`,`ill_email`,`suspend`,`system`,`Name`,`alias` FROM `$sealLIB` where alias LIKE '%".$locationalias."%'  and (`system`='mvls' or `system`='sals')";
-    }elseif ($locationname == "Upper Hudson Library System") {
-        $GETLISTSQL="SELECT `loc`,`participant`,`ill_email`,`suspend`,`system`,`Name`,`alias` FROM `$sealLIB` where alias LIKE '".$locationalias."%'  and `system`='UHLS' ";     
+  	}
+    }elseif ($locationname == "Mid-Hudson Library System") {
+        $GETLISTSQL="SELECT `loc`,`participant`,`ill_email`,`suspend`,`system`,`Name`,`alias` FROM `$sealLIB` where alias LIKE '%".$locationalias."%'  and `system`='MH' ";     
     } else {
         $GETLISTSQL="SELECT `loc`,`participant`,`ill_email`,`suspend`,`system`,`Name`,`alias` FROM `$sealLIB` where alias = '$locationalias' ";
     }
     // for test list of libraries on request page
-    // echo $GETLISTSQL."<br>";
-    // echo $locationalias."<br>";
-    // echo $locationname."<br>";
+     //echo $GETLISTSQL."<br>";
+     //echo $locationalias."<br>";
+     //echo $locationname."<br>";
 
     $result=mysqli_query($db, $GETLISTSQL);
     $row = mysqli_fetch_row($result);

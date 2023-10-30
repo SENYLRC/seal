@@ -53,6 +53,7 @@ if (($_SERVER['REQUEST_METHOD'] == 'GET')&&($recanswer=='1')) {
         echo "<option value='lc'>Library Courier</option>";
         echo "<option value='usps'>US Mail</option>";
         echo "<option value='upsfx'>UPS/FedEx</option>";
+        echo "<option value='empire'>Empire Library Delivery</option>";
         echo "<option value='other'>Other</option></select><br><br>";
         echo "Return Notes <input type='text' size='100' name='returnnote'>";
         echo "<input type='submit' value='Submit'>";

@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($reqanswer=='1') {
         echo "Please click the submit button to confirm you will fill the request.<br>  Thank You.<br><br>";
         echo "<h6>Recommend shipping methods</h6>";
-        echo "<b>This is an experimental feature, if unsure please verify correct shipping method</b>";
+        //echo "<b>This is an experimental feature, if unsure please verify correct shipping method</b>";
         //try to recommend delivery options
         //get the library ID with this transaction
         $LibInLISTSQL="SELECT `Requester LOC`, `Destination` FROM  `$sealSTAT`  WHERE `illNUB` = '$reqnumb'";
@@ -176,28 +176,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $lbEmpire2 = $rowborrowdopt["lbEmpire"];
         $lbCommCourier2 = $rowborrowdopt["lbCommCourier"];
 
+        $illdelmes='0';
+        if (($lbEmpire1 === "Yes") && ($lbEmpire2 === "Yes")) {
+            echo "<p class='green-text'>OK to ship via Empire Library Delivery</p>";
+            $illdelmes++;         
+        }
         if (($lbsyscourier1 ===  "Yes") && ($lbsyscourier2===  "Yes")) {
-            echo "<p class='green-text'>OK to ship via Library Courier</p>";
-        }elseif ((($lbEmpire2 === "Yes") &&($lbsyscourier1 === "No")) ||(($lbEmpire1 === "Yes")&&($lbsyscourier2 === "No"))) {
-            echo "<p class='green-text'>OK to ship via Empire Delivery though the Public Library Courier</p>";
-        }else{
-            echo "<p class='red-text'>Don't use Library Courier</p>";            
+            echo "<p class='green-text'>OK to ship via Public Library System Courier</p>";
+                        $illdelmes++;         
         }
         if (($lbUSPS1 === "Yes")&&($lbUSPS2 ==="Yes")) {
             echo "<p class='green-text'>OK to ship via US Mail</p>";
-        }else{
-            echo "<p class='red-text'>Please Contact Library US mail might not be an option</p>";            
+                        $illdelmes++;         
+
         }
         if (($lbCommCourier1 === "Yes")&&($lbCommCourier2 === "Yes")) {
-            echo "<p class='green-text'>OK to ship via Commercial Courier like Fedx or UPS</p>";
-        }else{
-            echo "<p class='orange-text'>Please Contact Library commercial courier might not be an option</p>";            
+            echo "<p class='green-text'>OK to ship via Commercial Courier like FedEx or UPS</p>";
+                        $illdelmes++;         
+
         }
-        if (($lbEmpire1 === "Yes") && ($lbEmpire2 === "Yes")) {
-            echo "<p class='green-text'>OK to ship via Empire Delivery</p>";
-        }else{
-            echo "<p class='red-text'>Direct Empire Delivery is not an option</p>";            
+
+        if ($illdelmes<1){
+            echo "<p class='red-text'>Contact the borrowing library to discuss an appropriate delivery method. More delivery information can also be found on the <a target='_blank' href='https://libguides.senylrc.org/SEAL/Delivery'>SEAL libguide</a></p>";
         }
+
+        
+
         
         
         

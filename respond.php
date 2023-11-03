@@ -74,16 +74,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($resfill=='1') {
 
                 // Setting up email notification
-            if($shipmethod=="lc") { $shiptxt='Library Courier';
-            }
             if($shipmethod=="usps") { $shiptxt='US Mail';
             }
-            if($shipmethod=="upsfx") { $shiptxt='UPS/FedEx';
+            if($shipmethod=="mhls") { $shiptxt='Mid-Hudson Courier';
+            }
+            if($shipmethod=="rcls") { $shiptxt='RCLS Courier';
+            }
+            if($shipmethod=="empire") { $shiptxt='Empire Delivery';
+            }
+            if($shipmethod=="ups") { $shiptxt='UPS';
+            }
+            if($shipmethod=="fedex") { $shiptxt='FedEx';
             }
             if($shipmethod=="other") { $shiptxt='Other';
             }
             if($shipmethod=="") { $shiptxt='';
             }
+
                 $message = "Your ILL request $reqnumb for $title will be filled by $destlib <br>Due Date: $duedate<br><br>Shipped via: $shiptxt<br><br>$respnote ".
                                      "<br><br>Please email <b>".$destemail_to."</b> for future communications regarding this request ";
                 // Setup php email headers
@@ -196,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         }
 
-        if ($illdelmes<1){
+        if ($illdelmes<1) {
             echo "<p class='red-text'>Contact the borrowing library to discuss an appropriate delivery method. More delivery information can also be found on the <a target='_blank' href='https://libguides.senylrc.org/SEAL/Delivery'>SEAL libguide</a></p>";
         }
 
@@ -219,12 +226,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             Due Date:
       <input id="datepicker" name="duedate"/><br>
     Ship Method:
-      <select name="shipmethod">
-          <option value=""></option>
-         <option value='lc'>Library Courier</option>
-         <option value='usps'>US Mail</option>
-         <option value='upsfx'>UPS/FedEx</option>
-         <option value='other'>Other</option></select><br>
+    <select name="shipmethod">
+        <option value=""></option>
+         <option value="usps">US Mail</option>
+         <option value="mhls">Mid-Hudson Courier</option>
+         <option value="rcls">RCLS Courier</option>
+         <option value="empire">Empire Delivery</option>
+         <option value="ups">UPS</option>
+         <option value="fedex">FedEx</option>
+         <option value="other">Other</option></select><br>
       <input type="submit" value="Submit">
       </form>
         <?php

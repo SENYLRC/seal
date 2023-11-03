@@ -42,6 +42,27 @@ $output = shell_exec($cmd);
 //echo "\n-->\n\n";
 
 
+$backupemail =$field_backup_email;
+//check if the field_backup_email is a valid Email
+if (filter_var($backupemail, FILTER_VALIDATE_EMAIL)) {
+    //valid address do nothing;
+} else {
+    //not valid address unset the variable
+    unset($backupemail);
+}
+
+//check if backup email is set
+if (isset($backupemail)) {
+    // Use == operator
+    if ($email == $backupemail) {
+        //email and backup are the same, do nothing
+    } else {
+        //email and backup are different add backup to the request
+        $email =$backupemail.','.$email;
+    }
+}
+
+
 echo "<p>Please review the details of your request and then select a library to send your request to.</p>";
 echo "<form action='sent' method='post'>";
 echo "<h3>Requester Details</h3>";

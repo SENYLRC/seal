@@ -3,10 +3,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
 <script>
-  $(document).ready(function() {
-    $("#startdate").datepicker();
-    $("#enddate").datepicker();
-  });
+    $(document).ready(function() {
+        $("#startdate").datepicker();
+        $("#enddate").datepicker();
+    });
 </script>
 <?php
 // allrequests.php###
@@ -19,22 +19,26 @@ $filter_illnum = (isset($_REQUEST['filter_illnum']) ? $filter_illnum = $_REQUEST
 if ($firstpass == "no") {
     // Setting options to user's chosen
     if ($filter_illnum != "") { // If looking for ILL num then set the other options
-        
-        $filter_startdate = date("m/d/Y");
-        echo "<br>my state date is".$filter_startdate."<br>";
-        $filter_enddate = date("m/d/Y");
+        if (isset($_REQUEST['filter_startdate'])) {
+            $filter_startdate = $_REQUEST['filter_startdate'];
+        }
+        if (isset($_REQUEST['filter_enddate'])) {
+            $filter_enddate = $_REQUEST['filter_enddate'];
+        }
+        if (isset($_REQUEST['filter_numresults'])) {
+            $filter_numresults = $_REQUEST['filter_numresults'];
+        }
         $filter_lender = "";
         $filter_borrower = "";
-        $filter_numresults = "all";
         $filter_title = "";
         $filter_yes = "yes";
         $filter_no = "yes";
         $filter_noans = "yes";
         $filter_expire = "yes";
         $filter_cancel = "yes";
-        $filter_recevied="yes";
-        $filter_return="yes";
-        $filter_checkin="yes";
+        $filter_recevied = "yes";
+        $filter_return = "yes";
+        $filter_checkin = "yes";
         $filter_destination = "";
         $filter_system = "";
         $filter_offset = 0;
@@ -105,9 +109,9 @@ if ($firstpass == "no") {
     $filter_expire = "yes";
     $filter_cancel = "yes";
 
-    $filter_recevied="yes";
-    $filter_return="yes";
-    $filter_checkin="yes";
+    $filter_recevied = "yes";
+    $filter_return = "yes";
+    $filter_checkin = "yes";
     $filter_system = "";
     $filter_offset = 0;
 }
@@ -120,21 +124,21 @@ mysqli_select_db($db, $dbname);
 // Sanitize data
 $loc = mysqli_real_escape_string($db, $loc);
 
-$SQLBASE="SELECT *, DATE_FORMAT(`Timestamp`, '%Y/%m/%d') FROM `$sealSTAT` WHERE ";
-$SQLEND=" ORDER BY `Timestamp` DESC ";
+$SQLBASE = "SELECT *, DATE_FORMAT(`Timestamp`, '%Y/%m/%d') FROM `$sealSTAT` WHERE ";
+$SQLEND = " ORDER BY `Timestamp` DESC ";
 
 if (strlen($filter_illnum) > 2) {
     $SQLILL = " AND `illNUB` = '" . $filter_illnum . "'";
 }
 
 if (strlen($filter_lender) > 2) {
-    $SQL_Search="SELECT `loc` FROM `$sealLIB` where `Name` like '%$filter_lender%'";
-    $Possibles=mysqli_query($db, $SQL_Search);
+    $SQL_Search = "SELECT `loc` FROM `$sealLIB` where `Name` like '%$filter_lender%'";
+    $Possibles = mysqli_query($db, $SQL_Search);
     // Return the number of rows in result set
-    $rowcount=mysqli_num_rows($Possibles);
-    if ($rowcount >0) {
+    $rowcount = mysqli_num_rows($Possibles);
+    if ($rowcount > 0) {
         while ($rowposs = mysqli_fetch_assoc($Possibles)) {
-            $possloc=$rowposs["loc"];
+            $possloc = $rowposs["loc"];
             if (strlen($SQL_LENDER) > 2) {
                 $SQL_LENDER = $SQL_LENDER . " OR `destination` = '$possloc'";
             } else {
@@ -146,13 +150,13 @@ if (strlen($filter_lender) > 2) {
 }
 
 if (strlen($filter_borrower) > 2) {
-    $SQL_Search="SELECT `loc` FROM `$sealLIB` where `Name` like '%$filter_borrower%'";
-    $Possibles=mysqli_query($db, $SQL_Search);
-        // Return the number of rows in result set
-        $rowcount=mysqli_num_rows($Possibles);
-    if ($rowcount >0) {
+    $SQL_Search = "SELECT `loc` FROM `$sealLIB` where `Name` like '%$filter_borrower%'";
+    $Possibles = mysqli_query($db, $SQL_Search);
+    // Return the number of rows in result set
+    $rowcount = mysqli_num_rows($Possibles);
+    if ($rowcount > 0) {
         while ($rowposs = mysqli_fetch_assoc($Possibles)) {
-            $possloc=$rowposs["loc"];
+            $possloc = $rowposs["loc"];
             if (strlen($SQL_BORROWER) > 2) {
                 $SQL_BORROWER = $SQL_BORROWER . " OR `Requester LOC` = '$possloc'";
             } else {
@@ -177,7 +181,7 @@ if ($filter_system != "") {
     $SQLSYSTEM = " AND (`ReqSystem` = '" . $filter_system . "' OR `DestSystem` = '" . $filter_system . "')";
 }
 
-$SQLMIDDLE =''; // This builds the display options for the SQL
+$SQLMIDDLE = ''; // This builds the display options for the SQL
 if ($filter_yes == "yes") {
     $SQLMIDDLE = "`fill`= 1 ";
 }
@@ -215,13 +219,15 @@ if ($filter_checkin == "yes") {
     } else {
         $SQLMIDDLE = "`checkinAccount` IS NOT NULL";
     }
-} if ($filter_recevied == "yes") {
+}
+if ($filter_recevied == "yes") {
     if (strlen($SQLMIDDLE) > 2) {
         $SQLMIDDLE = $SQLMIDDLE . " OR `receiveAccount` IS NOT NULL AND `returnAccount` IS NULL";
     } else {
         $SQLMIDDLE = "`receiveAccount` IS NOT NULL AND `returnAccount` IS NULL";
     }
-} if ($filter_return == "yes") {
+}
+if ($filter_return == "yes") {
     if (strlen($SQLMIDDLE) > 2) {
         $SQLMIDDLE = $SQLMIDDLE . " OR `returnAccount` IS NOT NULL AND `checkinAccount` IS NULL";
     } else {
@@ -266,7 +272,7 @@ $GETLISTCOUNTwhole = mysqli_num_rows($GETCOUNT);
 // echo "</p>";
 
 // Filter options
-echo "<form action='".$_SERVER['REDIRECT_URL']."' method='post'>";
+echo "<form action='" . $_SERVER['REDIRECT_URL'] . "' method='post'>";
 echo "<input type='hidden' name='firstpass' value='no'>";
 echo "<input type='hidden' name='filter_offset' value='" . $filter_offset . "'>";
 echo "<p>Display Fill Status: ";
@@ -304,7 +310,9 @@ echo "<option " . selected("all", $filter_numresults) . " value = 'all'>All</opt
 echo "</select> results per page. ";
 
 
-$resultpages = ceil($GETLISTCOUNTwhole / $filter_numresults);
+if (is_numeric($filter_numresults)) {
+    $resultpages = ceil($GETLISTCOUNTwhole / $filter_numresults);
+}
 
 $display_page = $filter_offset + 1;
 if ($filter_numresults != "all") {
@@ -321,7 +329,7 @@ echo "</p>";
 echo "</form>";
 
 echo "<table><TR><TH width='5%'>ILL #</TH><TH width='25%'>Title / Author</TH><TH>Type</TH><TH>Need By</TH><TH>Lender</TH><TH>Borrower</TH><TH>Due Date & Shipping & ILLiad #</TH><TH>Timestamp</TH><TH>Status</TH></TR>";
-$rowtype=1;
+$rowtype = 1;
 while ($row = mysqli_fetch_assoc($GETLIST)) {
     $illNUB = $row["illNUB"];
     $title = $row["Title"];
@@ -338,59 +346,59 @@ while ($row = mysqli_fetch_assoc($GETLIST)) {
     $reqemail = $row["requesterEMAIL"];
     $timestamp = $row["Timestamp"];
     $shipmethod = $row["shipMethod"];
-    $receiveAccount=$row['receiveAccount'];
-    $returnAccount=$row['returnAccount'];
-    $returnnote=$row['returnNote'];
-    $returnmethod=$row['returnMethod'];
-    $returndate=$row['returnDate'];
-    $fillNoFillDate=$row['fillNofillDate'];
-    $receivedate=$row['receiveDate'];
-    $checkinAccount=$row['checkinAccount'];
-    $checkindate=$row['checkinTimeStamp'];
+    $receiveAccount = $row['receiveAccount'];
+    $returnAccount = $row['returnAccount'];
+    $returnnote = $row['returnNote'];
+    $returnmethod = $row['returnMethod'];
+    $returndate = $row['returnDate'];
+    $fillNoFillDate = $row['fillNofillDate'];
+    $receivedate = $row['receiveDate'];
+    $checkinAccount = $row['checkinAccount'];
+    $checkindate = $row['checkinTimeStamp'];
     $duedate = $row["DueDate"];
-    $illiadnumb= $row["IlliadTransID"];
-    $renewNote= $row["renewNote"];
+    $illiadnumb = $row["IlliadTransID"];
+    $renewNote = $row["renewNote"];
     $renewNoteLender = $row["renewNoteLender"];
     $renewAccountRequester = $row["renewAccountRequester"];
     $fill = $row["Fill"];
     $statustxt = itemstatus($fill, $receiveAccount, $returnAccount, $returndate, $receivedate, $checkinAccount, $checkindate, $fillNoFillDate);
-    $shiptxt=shipmtotxt($shipmethod);
-    $returnmethodtxt=shipmtotxt($returnmethod);
-    $dest=trim($dest);
+    $shiptxt = shipmtotxt($shipmethod);
+    $returnmethodtxt = shipmtotxt($returnmethod);
+    $dest = trim($dest);
     //for testing
     //echo $dest."<br>";
     // Get the Destination Name
-    if (strlen($dest)>0) {
-        $GETLISTSQLDEST="SELECT`Name`,`ill_email` FROM `$sealLIB` where loc like '$dest'  limit 1";
+    if (strlen($dest) > 0) {
+        $GETLISTSQLDEST = "SELECT`Name`,`ill_email` FROM `$sealLIB` where loc like '$dest'  limit 1";
         //for testing
         //echo $GETLISTSQLDEST."<br>";
-        $resultdest=mysqli_query($db, $GETLISTSQLDEST);
+        $resultdest = mysqli_query($db, $GETLISTSQLDEST);
         while ($rowdest = mysqli_fetch_assoc($resultdest)) {
-            $dest=$rowdest["Name"];
-            $destemail=$rowdest["ill_email"];
+            $dest = $rowdest["Name"];
+            $destemail = $rowdest["ill_email"];
         }
     } else {
-        $dest="Error No Library Selected";
+        $dest = "Error No Library Selected";
     }
     if ($rowtype & 1) {
-        $rowclass="odd";
+        $rowclass = "odd";
     } else {
-        $rowclass="even";
+        $rowclass = "even";
     }
-    $displaynotes=build_notes($reqnote, $lendnote);
-    $dispalyreturnnotes=build_return_notes($returnnote, $returnmethodtxt);
-    $displayrenewnotes= build_renewnotes($renewNote, $renewNoteLender);
+    $displaynotes = build_notes($reqnote, $lendnote);
+    $dispalyreturnnotes = build_return_notes($returnnote, $returnmethodtxt);
+    $displayrenewnotes = build_renewnotes($renewNote, $renewNoteLender);
     echo "<TR class='$rowclass'><TD>$illNUB</TD><TD>$title</br><i>$author</i></TD><TD>$itype</TD><TD>$needby</TD><TD><a href='mailto:$destemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$dest</a></br><i>$destsys</i></TD><TD><a href='mailto:$reqemail?Subject=NOTE Request ILL# $illNUB' target='_blank'>$reqp</a></br>$reql</br><i>$reqsys</i></TD><TD>$duedate<br>$shiptxt<br>$illiadnumb</TD><TD>$timestamp</TD><TD>$statustxt</TD></TR> ";
     if ((strlen($reqnote) > 2) || (strlen($lendnote) > 2)) {
         echo "<TR class='$rowclass'><TD></TD><TD></TD><TD colspan=8>$displaynotes</TD></TR>";
     }
-    if ((strlen($returnnote) > 2) || (strlen($returnmethod) > 2)) {
+    if ((isset($returnnote) && strlen($returnnote) > 2) || (isset($returnmethod) && strlen($returnmethod) > 2)) {
         echo "<TR class='$rowclass'><TD></TD><TD></TD><TD colspan=8>$dispalyreturnnotes</TD></TR>";
     }
-    if ((strlen($renewNote) > 2) || (strlen($renewNoteLender) > 2)) {
+
+    if ((isset($renewNote) && strlen($renewNote) > 2) || (isset($renewNoteLender) && strlen($renewNoteLender) > 2)) {
         echo "<TR class='$rowclass'><TD></TD><TD></TD><TD colspan=8>$displayrenewnotes</TD></TR>";
     }
-
     $rowtype = $rowtype + 1;
 }
 echo "</table>";

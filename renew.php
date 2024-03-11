@@ -220,7 +220,7 @@ if ($renanswer == '1') {
             How do you wish to answer the renewal?  <a href='http://seal.senylrc.org/renew?num=$reqnumb&a=1' >Approved</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href='http://seal.senylrc.org/renew?num=$reqnumb&a=2' >Deny</a>
             <Br>
             <hr style='width:200px;text-align:left;margin-left:0'>
-            <br>  This is an automated message from the SEAL. Responses to this email will be sent back to Capital District Library Council staff. If you would like to contact the other library in this ILL transaction, email " . $reqemail . ".";
+            <br>  This is an automated message from the SEAL. Responses to this email will be sent back to Southeastern New York Library Resources Council staff. If you would like to contact the other library in this ILL transaction, email " . $reqemail . ".";
             // Set email subject for renewal
             $subject = "SEAL Renew Request: from " . $field_your_institution . " ILL# $reqnumb";
             $subject = html_entity_decode($subject, ENT_QUOTES, 'UTF-8');

@@ -265,7 +265,7 @@ foreach ($records->location as $location) { // Locations loop start
         }
         if ($destpart == 0) {
             $destfail = 1;
-            $failmessage = "Library not particpating in CaDiLaC";
+            $failmessage = "Library not particpating in SEAL";
         }
         if (strlen($destemail) < 2) {
             $destfail = 1;
@@ -314,7 +314,7 @@ foreach ($records->location as $location) { // Locations loop start
         $cmdseslc = "curl -b JSESSIONID=$jession $reqserverurl$windowid\\&id=" . urlencode($idc) . "\&checksum=$seslcchecksum\&offset=1";
         $outputseslc = shell_exec($cmdseslc);
         // This echo will show the CURL statment as an HTML comment
-        // echo "\n<br><!-- my cmd koha is $cmdseslc \n-->";
+        //echo "\n<br><!-- my cmd koha is $cmdseslc \n-->";
         $recordssSESLC = new SimpleXMLElement($outputseslc); // for production
         // Go through the holding records
         foreach ($recordssSESLC->d952 as $d952) {
@@ -324,7 +324,16 @@ foreach ($records->location as $location) { // Locations loop start
             $itemavail = $d952->s7;
             // Remove colon from call numbers
             $seslccall = str_replace(':', '.', $seslccall);
-            $itemavailtext = set_koha_availability($itemavail);
+            // Check if the location is 'Ramapo-Catskill Library System' and adjust item availability if needed
+            if ($location['name'] == 'Ramapo-Catskill Library System') {
+                $itemavail = trim(strtolower($d952->sk)); // Adjusting item availability based on the location
+            }
+
+            // Process the availability status
+            $result = set_koha_availability($itemavail);
+            $itemavailtext = $result['status']; // Outputs the HTML formatted status
+            $itemavail = $result['code']; // Use this code for further processing
+
             $locationinfo = find_locationinfo($itemlocation, $location['name']);
             $itemlocation = htmlspecialchars($itemlocation, ENT_QUOTES); // Sanitizes locations with special characters in them
             $destill = $locationinfo[0]; // Destination ILL Code
@@ -377,7 +386,7 @@ foreach ($records->location as $location) { // Locations loop start
             $destfail = 0; // 0=No, 1=Yes
             if ($destpart == 0) {
                 $destfail = 1;
-                $failmessage = "Library not particpating in CaDiLaC";
+                $failmessage = "Library not particpating in SEAL";
             }
             if ($itemavail == 1) {
                 $destfail = 1;

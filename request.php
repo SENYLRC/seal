@@ -421,6 +421,7 @@ foreach ($records->location as $location) { // Locations loop start
                 $itemcallnum = preg_replace('/[:]/', ' ', $itemcallnum);
                 $itemlocation = preg_replace('/[:]/', ' ', $itemlocation);
                 $itemlocallocation = preg_replace('/[:]/', ' ', $itemlocallocation);
+
                 echo "<div class='multiplereq'><input type='checkbox' class='librarycheck' name='libdestination[]' value='" . $itemlocation . ":" . $destlibname . ":" . $destlibsystem . ":" . $itemavailtext . ":" . $itemcallnum . ":" . $itemlocallocation . ":" . $destemail . ":" . $destill . "'><strong>" . $destlibname . "</strong> (" . $destlibsystemtxt . "), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
                 echo "<div class='singlereq'><input type='radio' class='librarycheck[]' name='libdestination[]' value='" . $itemlocation . ":" . $destlibname . ":" . $destlibsystem . ":" . $itemavailtext . ":" . $itemcallnum . ":" . $itemlocallocation . ":" . $destemail . ":" . $destill . "'><strong>" . $destlibname . "</strong> (" . $destlibsystemtxt . "), Availability: $itemavailtext, Call Number:$itemcallnum  </br></div>";
                 $loccount = $loccount + 1;

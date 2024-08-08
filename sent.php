@@ -96,6 +96,7 @@ if (strlen($issn)>2) {
 $reqsystem=$field_home_library_system;
 foreach ($_POST['libdestination'] as $destination) {
     list($libcode, $library, $destsystem, $itemavail, $itemcall, $itemlocation, $destemail, $destloc) = explode(":", $destination);
+
     // UnHTML encodes call numbers that might have strange characters
     $itemcall = htmlspecialchars_decode($itemcall, ENT_QUOTES);
     $libcode = htmlspecialchars_decode($libcode, ENT_QUOTES);

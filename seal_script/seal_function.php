@@ -201,68 +201,27 @@ function normalize_availability($itemavail)
 function set_availability($itemavail)
 {
     if ($itemavail == 1) {
-        return '<span style="color: #060;">Available</span>';
+        return "Available";
     }
     if ($itemavail == 0) {
-        return '<span style="color: #903;">Unavailable</span>';
+        return "Unavailable";
     }
     if ($itemavail == 2) {
-        return '<span style="color: #903;">UNKNOWN</span>';
+        return "UNKNOWN";
     }
 }
 function set_koha_availability($itemavail)
 {
-    // Case-insensitive check for "Available"
-    if ($itemavail == 0 || stripos($itemavail, "available") !== false) {
-        return [
-            'status' => '<span style="color: #060;">Available</span>',
-            'code' => 0
-        ];
+    if ($itemavail == 0) {
+        return "Available";
     }
     if ($itemavail == 1) {
-        return [
-            'status' => '<span style="color: #903;">Unavailable</span>',
-            'code' => 2
-        ];
+        return "Unavailable";
     }
     if ($itemavail == 2) {
-        return [
-            'status' => '<span style="color: #903;">UNKNOWN</span>',
-            'code' => 3
-        ];
+        return "UNKNOWN";
     }
-    if (stripos($itemavail, "checked out") !== false) {
-        return [
-            'status' => '<span style="color: #903;">Checked out</span>',
-            'code' => 1
-        ];
-    }
-    if (stripos($itemavail, "on hold") !== false) {
-        return [
-            'status' => '<span style="color: #903;">On hold</span>',
-            'code' => 1
-        ];
-    }
-    if (stripos($itemavail, "lost") !== false) {
-        return [
-            'status' => '<span style="color: #903;">lost</span>',
-            'code' => 1
-        ];
-    }
-
-    if (stripos($itemavail, "in transit") !== false) {
-        return [
-            'status' => '<span style="color: #903;">In transit</span>',
-            'code' => 1
-        ];
-    }    
-    // Default return: return the original value of itemavail
-    return [
-        'status' => $itemavail,
-        'code' => null // You can set this to a default code if needed
-    ];
 }
-
 
 function find_catalog($location)
 {
@@ -313,7 +272,7 @@ function find_catalog($location)
         return "OPALS";
             break;
     case "Ramapo-Catskill Library System":
-        return "Koha";
+        return "SymphonyRCLS";
             break;
     case "Rockland Community College":
         return "Alma";
@@ -354,8 +313,7 @@ function find_locationinfo($locationalias, $locationname)
         $category = trim($parts[1]);
         //for testing
         //echo "my location alias is ".$locationalias."<br>";
-        $GETLISTSQL="SELECT `loc`,`participant`,`ill_email`,`suspend`,`system`,`Name`,`alias` FROM `$sealLIB` where alias LIKE '%".$locationalias."%'  and (`system`='mvls' or `system`=
-'sals')";
+        $GETLISTSQL="SELECT `loc`,`participant`,`ill_email`,`suspend`,`system`,`Name`,`alias` FROM `$sealLIB` where alias LIKE '%".$locationalias."%'  and (`system`='mvls' or `system`='sals')";
   	}
     }elseif ($locationname == "Mid-Hudson Library System") {
         $GETLISTSQL="SELECT `loc`,`participant`,`ill_email`,`suspend`,`system`,`Name`,`alias` FROM `$sealLIB` where alias LIKE '%".$locationalias."%'  and `system`='MH' ";     
@@ -414,7 +372,7 @@ function check_itemtype($destill, $itemtype)
                 return 1;
             }
         }
-        if (($itemtype == 'recording')  || ($itemtype == 'video')  || ($itemtype == 'audio')|| ($itemtype == 'video-dvd')) {
+        if (($itemtype == 'recording')  || ($itemtype == 'video')  || ($itemtype == 'audio')) {
             // See if  request is  audio video related
             if ($row['av_loan']=="Yes") {
                 // Checking if AV is allowed

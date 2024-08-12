@@ -12,7 +12,7 @@ mysqli_select_db($db, $dbname);
 
 $sqlselect = "
     SELECT * 
-FROM `SENYLRC-SEAL2-STATS`
+FROM `$sealSTAT`
 WHERE (
         (`IlliadStatus` LIKE '%Awaiting%' 
         OR `IlliadStatus` LIKE '%Review%' 

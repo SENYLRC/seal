@@ -6,8 +6,9 @@ mysqli_select_db($db, $dbname);
 
 $currentDate = new DateTime();
 
-// Add two years to the current date
-$currentDate->sub(new DateInterval('P3Y'));
+// Subtract 60 months  the current date
+//SE Poly is 5 years from ILL date
+$currentDate->sub(new DateInterval('P60M'));
 
 // Format the result as a string
 $ydate = $currentDate->format('Y-m-d');
@@ -19,8 +20,7 @@ $sqlupdate = "UPDATE `$sealSTAT` SET  `Title` = '', `Author` = '', `pubdate` = '
 //for test
 echo $testsqlselect."\n\n";
 echo $sqlupdate."\n\n";
-$result= mysqli_query($db, $sqlupdate);
-
+$result=mysqli_query($db, $sqlupdate);
 if ($result === false) {
     // The query failed
     echo "Update failed: " . mysqli_error($db);

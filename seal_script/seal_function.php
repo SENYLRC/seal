@@ -212,16 +212,57 @@ function set_availability($itemavail)
 }
 function set_koha_availability($itemavail)
 {
-    if ($itemavail == 0) {
-        return "Available";
+    // Case-insensitive check for "Available"
+    if ($itemavail == 0 || stripos($itemavail, "available") !== false) {
+        return [
+            'status' => 'Available',
+            'code' => 0
+        ];
     }
     if ($itemavail == 1) {
-        return "Unavailable";
+        return [
+            'status' => 'Unavailable',
+            'code' => 2
+        ];
     }
     if ($itemavail == 2) {
-        return "UNKNOWN";
+        return [
+            'status' => 'UNKNOWN',
+            'code' => 3
+        ];
     }
+    if (stripos($itemavail, "checked out") !== false) {
+        return [
+            'status' => 'Checked out',
+            'code' => 1
+        ];
+    }
+    if (stripos($itemavail, "on hold") !== false) {
+        return [
+            'status' => 'On hold',
+            'code' => 1
+        ];
+    }
+    if (stripos($itemavail, "lost") !== false) {
+        return [
+            'status' => 'lost',
+            'code' => 1
+        ];
+    }
+
+    if (stripos($itemavail, "in transit") !== false) {
+        return [
+            'status' => 'In transit',
+            'code' => 1
+        ];
+    }    
+    // Default return: return the original value of itemavail
+    return [
+        'status' => $itemavail,
+        'code' => null // You can set this to a default code if needed
+    ];
 }
+
 
 function find_catalog($location)
 {
@@ -272,7 +313,7 @@ function find_catalog($location)
         return "OPALS";
             break;
     case "Ramapo-Catskill Library System":
-        return "SymphonyRCLS";
+        return "Koha";
             break;
     case "Rockland Community College":
         return "Alma";
@@ -372,7 +413,7 @@ function check_itemtype($destill, $itemtype)
                 return 1;
             }
         }
-        if (($itemtype == 'recording')  || ($itemtype == 'video')  || ($itemtype == 'audio')) {
+        if (($itemtype == 'recording')  || ($itemtype == 'video')  || ($itemtype == 'audio')|| ($itemtype == 'video-dvd')) {
             // See if  request is  audio video related
             if ($row['av_loan']=="Yes") {
                 // Checking if AV is allowed

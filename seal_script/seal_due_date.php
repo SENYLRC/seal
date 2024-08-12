@@ -45,10 +45,10 @@ while ($row = mysqli_fetch_assoc($retval)) {
       $article<br><br>
       <br>
       <br><hr style='width:200px;text-align:left;margin-left:0'><Br>
-      This is an automated message from the eForm ILL System. Responses to this email will be sent back to staff at Capital District Library Council. If you would like to contact the other
+      This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern New York Library Resources Council. If you would like to contact the other
 library in this ILL transaction, email.";
     #######Set email subject for request
-    $subject = "eForm Approaching Due Date: for ILL# $illnum";
+    $subject = "SEAL Approaching Due Date: for ILL# $illnum";
     $subject = html_entity_decode (  $subject, ENT_QUOTES, 'UTF-8' );
     echo "$subject\n";
     #Set email to me for testing

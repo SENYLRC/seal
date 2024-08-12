@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Escape values for security
     $respnote = mysqli_real_escape_string($db, $respnote);
     $resfill = mysqli_real_escape_string($db, $resfill);
-    $sqlupdate = "UPDATE `$sealSTAT` SET `Fill` =  '6', `Title` = '', `Author` = '', `pubdate` = '', `reqisbn` = '', `reqissn` = '', `itype` = '', `Call Number` = '', `article` = '', `needbydate` = '', `patronnote` = '', `DueDate` = '', `emailsent` = '1' , `responderNOTE` =  '$respnote' WHERE `illNUB` = '$reqnumb'";
+    $sqlupdate = "UPDATE `$sealSTAT` SET `Fill` =  '6', `Title` = '', `Author` = '', `pubdate` = '', `reqisbn` = '', `reqissn` = '', `itype` = '', `Call Number` = '', `article` = '', `needbydate` = '', `patronnote` = '', `DueDate` = '', `emailsent` = '1' , `responderNOTE` =  '$respnote', `IlliadStatus` = '' WHERE `illNUB` = '$reqnumb'";
 
     if (mysqli_query($db, $sqlupdate)) {
         echo "Thank you.  Your response has been recorded to the request<br><br>";
@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($reqanswer=='3') {
              // Generate web message
             echo "Please click the submit button to confirm you want to cancel this request.<br>  Thank You."; ?>
-       <br><br><h4>Notes about the cancelation</h4>
+       <br><br><h4>Notes about the cancellation</h4>
        <form action="/cancel" method="post">
        <input type='hidden' name='num' value= '<?php echo $reqnumb ?>' '>
        <input type='hidden' name='fill' value='6'>

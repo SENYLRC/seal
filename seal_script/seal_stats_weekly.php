@@ -61,7 +61,7 @@ $row_actlib2 = mysqli_num_rows($retactlib2);
 ######Message for SENYLRC Staff
 
 $messagedest = "
-Linx stats from ". $startdate ." to  ".$curdate." <br>
+SEAL stats from ". $startdate ." to  ".$curdate." <br>
        Request Filled: ".$row_fill."<br>
   Request Not Filled: ".$row_notfill."<br>
      Request Expired: ".$row_expire."<br>

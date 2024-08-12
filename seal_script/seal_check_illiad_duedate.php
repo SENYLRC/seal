@@ -22,6 +22,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $title = $row['Title'];
     $origDueDate = $row['DueDate'];
     $requesterEMAIL = $row['requesterEMAIL'];
+
+
     //Get data about Destination library from database
     $GETLISTSQLDEST="SELECT `APIkey`, `IlliadURL`, `Name`, `ill_email` FROM `$sealLIB` where loc like '$destlib'  limit 1";
     echo $GETLISTSQLDEST."\n";
@@ -33,9 +35,10 @@ while ($row = mysqli_fetch_assoc($retval)) {
     }
 
     //Check if working with NewPaltz and remove eFrom from end of URL
-    if (strpos($illiadURL, 'newpaltz.edu') !== false) {
-        $illiadURL=substr($illiadURL, 0, -5);
-    }
+//not need Aug 2024
+//    if (strpos($illiadURL, 'newpaltz.edu') !== false) {
+//        $illiadURL=substr($illiadURL, 0, -5);
+//    }
 
     //build the curl command
     $url =$illiadURL." ".$Illiadid."";
@@ -69,7 +72,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
             $to=$requesterEMAIL;
             // $to = "spalding@senylrc.org";
             $message="eFrom Request ".$reqnumb." ".$reqnumbRequest." from ".$destlib." has a new due date which is ".$dueDate."<br>";
-            $message.="This is an automated message from the eForm ILL System. Responses to this email will be sent back to staff at Capital District Library Council. If you would like to contact the oth
+            $message.="This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern New York Library Resources Council. If you would like to contact the oth
 er library in this ILL transaction";
             $subject = "Request ".$reqnumb." has a new due date  ";
             #####SEND requester an email to let them know the request will be filled
@@ -93,8 +96,8 @@ er library in this ILL transaction";
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
             $to = "noc@senylrc.org";
-            $message="eForm was not able to update ILLiad status";
-            $subject = "eForm/ILLiad Database Update Failure  ";
+            $message="SEAL was not able to update ILLiad status";
+            $subject = "SEAL/ILLiad Database Update Failure  ";
             #####SEND requester an email to let them know the request will be filled
             $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
             $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
@@ -138,8 +141,8 @@ er library in this ILL transaction";
         //if error happen let tech support know
         } else {
             $to = "noc@senylrc.org";
-            $message="eForm was not able to update ILLiad status";
-            $subject = "eForm/ILLiad Database Update Failure  ";
+            $message="SEAL was not able to update ILLiad status";
+            $subject = "SEAL/ILLiad Database Update Failure  ";
             #####SEND requester an email to let them know the request will be filled
             $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
             $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
@@ -190,8 +193,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
         $headers .= "MIME-Version: 1.0\r\n";
         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
         $to = "noc@senylrc.org";
-        $message="eForm was not able to update ILLiad status";
-        $subject = "eForm/ILLiad Database Update Failure  ";
+        $message="SEAL was not able to update ILLiad status";
+        $subject = "SEAL/ILLiad Database Update Failure  ";
         #####SEND requester an email to let them know the request will be filled
         $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
         $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);

@@ -167,7 +167,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
 						$email<br>
 						$wphone<br>
             <br><hr style='width:200px;text-align:left;margin-left:0'><Br>
-            This is an automated message from the eForm ILL System. Responses to this email will be sent back to staff at Capital District Library Council. If you would like to contact the other library in this ILL transaction, email ".$destemailarray.".";
+            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern New York Library Resources Council. If you would like to contact the other library in this ILL transaction, email ".$destemailarray.".";
 
 
         ######Message for the destination library
@@ -187,7 +187,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
 						$wphone<br>
             <br>
             <hr style='width:200px;text-align:left;margin-left:0'><br>
-            This is an automated message from the eForm ILL System. Responses to this email will be sent back to staff at Capital District Library Council. If you would like to contact the other
+            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern New York Library Resources Council. If you would like to contact the other
 library in this ILL transaction, email ".$email."
 						<br>";
 

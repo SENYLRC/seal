@@ -190,7 +190,7 @@ while ($row = mysqli_fetch_assoc($retval)) {
 						$email<br>
 						$wphone<br><br>
             <hr style='width:200px;text-align:left;margin-left:0'><Br>
-            This is an automated message from the Linx ILL System. Responses to this email will be sent back to staff at Capital District Library Council. If you would like to contact the other
+            This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern New York Library Resources Council. If you would like to contact the other
 library in this ILL transaction, email ".$email_to.".";
 
 
@@ -219,7 +219,7 @@ library in this ILL transaction, email ".$email_to.".";
 </a> &nbsp&nbsp&nbsp&nbsp                  <a href='http://seal.senylrc.org/respond?num=$illnum&a=0' >No</a>
 <br> <hr style='width:200px;text-align:left;margin-left:0'>
 <br>
-This is an automated message from the Linx ILL System. Responses to this email will be sent back to staff at Capital District Library Council. If you would like to contact the other library in t
+This is an automated message from the SEAL ILL System. Responses to this email will be sent back to staff at Southeastern New York Library Resources Council. If you would like to contact the other library in t
 his ILL transaction, email ".$email."
 <br>";
 

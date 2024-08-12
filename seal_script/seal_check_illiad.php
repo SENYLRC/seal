@@ -5,7 +5,23 @@ $db = mysqli_connect($dbhost, $dbuser, $dbpass);
 mysqli_select_db($db, $dbname);
 
 //Get data about requests from database
-$sqlselect = "SELECT *  FROM `$sealSTAT` WHERE `IlliadStatus` LIKE '%Awaiting%' or `IlliadStatus` LIKE '%Review%' or `IlliadStatus` LIKE '%Switch%'";
+//$sqlselect = "SELECT *  FROM `$sealSTAT` WHERE `IlliadStatus` LIKE '%Awaiting%' or `IlliadStatus` LIKE '%Review%' or `IlliadStatus` LIKE '%Switch%'";
+
+$sqlselect = "
+SELECT * 
+FROM `SENYLRC-SEAL2-STATS`
+WHERE (
+        (`IlliadStatus` LIKE '%Awaiting%' 
+        OR `IlliadStatus` LIKE '%Review%' 
+        OR `IlliadStatus` LIKE '%Switch%')
+        AND `IlliadStatus` NOT LIKE '%Cancelled by ILL Staff%'
+        AND `Title` != ''
+    )
+AND `TimeStamp` >= DATE_SUB(CURDATE(), INTERVAL 10 MONTH);
+
+";
+
+echo $sqlselect."\n";
 $retval = mysqli_query($db, $sqlselect);
 $GETLISTCOUNT = mysqli_num_rows($retval);
 
@@ -18,6 +34,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $title = $row['Title'];
     $eformFILL = $row['Fill'];
     $requesterEMAIL = $row['requesterEMAIL'];
+     // for testing
+     //$requesterEMAIL='spalding@senylrc.org';
     //Get data about Destination library from database
     $GETLISTSQLDEST="SELECT `APIkey`, `IlliadURL`, `Name`, `ill_email` FROM `$sealLIB` where loc like '$destlib'  limit 1";
     $resultdest=mysqli_query($db, $GETLISTSQLDEST);
@@ -58,24 +76,24 @@ while ($row = mysqli_fetch_assoc($retval)) {
     $dueDate = $output_decoded['DueDate'];
     $dueDate = strstr($dueDate, 'T', true);
     //debuging output
-    //echo "Trans Numb ".$illiadtxnub."\n";
-    //echo "Status ".$status."\n";
-    //echo "Cancel Reason ".$reasonCancel."\n";
-    //echo "Due Date ".$dueDate."\n";
+    echo "Trans Numb ".$illiadtxnub."\n";
+    echo "Status ".$status."\n";
+    echo "Cancel Reason ".$reasonCancel."\n";
+    echo "Due Date ".$dueDate."\n";
 
     //IF request was filled mark it as fill and send out email
     if ((!empty($dueDate))&&(strpos($status, 'Shipped') !== false)) {
-        //echo "item has been filled\n\n";
+        echo "item has been filled and database will be updated\n\n";
         $sqlupdate2 = "\n UPDATE `$sealSTAT` SET `shipMethod`='',`DueDate` = '$dueDate',  `Fill` = '1' , `IlliadStatus` = '$status' WHERE `index` = $sqlidnumb\n";
-        //echo $sqlupdate2;
+        echo $sqlupdate2;
         //do database update and see if there was an error
         if (mysqli_query($db, $sqlupdate2)) {
             echo "database was updataed";
         //if error happen let tech support know
         } else {
             $to = "noc@senylrc.org";
-            $message="Linx was not able to update ILLiad status";
-            $subject = "Linx/ILLiad Database Update Failure  ";
+            $message="SEAL was not able to update ILLiad status";
+            $subject = "SEAL/ILLiad Database Update Failure  ";
             #####SEND requester an email to let them know the request will be filled
             $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
             $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
@@ -105,8 +123,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
         //if error happen let tech support know
         } else {
             $to = "noc@senylrc.org";
-            $message="Linx was not able to update ILLiad status";
-            $subject = "Linx/ILLiad Database Update Failure  ";
+            $message="SEAL was not able to update ILLiad status";
+            $subject = "SEAL/ILLiad Database Update Failure  ";
             #####SEND requester an email to let them know the request will be filled
             $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
             $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);
@@ -162,8 +180,8 @@ while ($row = mysqli_fetch_assoc($retval)) {
         //if error happen let tech support know
         } else {
             $to = "spalding@senylrc.org";
-            $message="Linx was not able to update ILLiad status";
-            $subject = "Linx/ILLiad Database Update Failure  ";
+            $message="SEAL was not able to update ILLiad status";
+            $subject = "SEAL/ILLiad Database Update Failure  ";
             #####SEND requester an email to let them know the request will be filled
             $message = preg_replace('/(?<!\r)\n/', "\r\n", $message);
             $headers = preg_replace('/(?<!\r)\n/', "\r\n", $headers);

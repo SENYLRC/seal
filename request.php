@@ -16,6 +16,8 @@
 
 
     })(jQuery);
+
+
 </script>
 <?php
 require '/var/www/seal_script/seal_function.php';
@@ -237,7 +239,7 @@ foreach ($records->location as $location) { // Locations loop start
         $destlibname = htmlspecialchars($destlibname, ENT_QUOTES); // Sanitizes library names with special characters in them
         //only check item type if they are active in the ILL program
         if ($destpart == 1) {
-            $desttypeloan = check_itemtype($destill, $itemtype); // 0=No, 1=Yes
+            $desttypeloan = check_itemtype($destill, $itemtype, $destlibsystem); // 0=No, 1=Yes
         }
         if (($catalogtype == "Innovative") && ($itemlocation == "ODY Folio")) {
             $desttypeloan = 1;
@@ -344,7 +346,7 @@ foreach ($records->location as $location) { // Locations loop start
             $destlibname = $locationinfo[5]; // Destination library name
             $destAlias = $locationinfo[6]; // Destination Alias
             $destlibname = htmlspecialchars($destlibname, ENT_QUOTES); // Sanitizes library names with special characters in them
-            $desttypeloan = check_itemtype($destill, $itemtype); // 0=No, 1=Yes
+            $desttypeloan = check_itemtype($destill, $itemtype, $destlibsystem); // 0=No, 1=Yes
             $itemlocallocation = $itemlocation; // Needed in sent.php
             // translate system code to text name
             if (strcmp($destlibsystem, 'MH') == 0) {
@@ -479,4 +481,7 @@ echo "</form>";
     window.onload = function() {
         multiRequest();
     };
+
+
+
 </script>
